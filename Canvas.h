@@ -12,7 +12,7 @@ struct Point
 class Canvas
 {
 private:
-	Frame* frame;
+	Frame* frame = nullptr;
 	
 	void swap(int &a, int &b);
 	void swap(float &a, float &b);
@@ -45,6 +45,7 @@ public:
 	void fillTriangle(int x0, int y0, int x1, int y1, int x2, int y2, Color color);
 	
 	void drawPoint(Point p, Color color = Color(0));
+	void lerpDrawPoint(Point p, float size, Color color = Color::BLACK);
 	void drawLine(Point p0, Point p1, Color color = Color(0));
 	void drawRect(Point p, int width, int height, Color color = Color(0));
 	void fillRect(Point p, int width, int height, Color color = Color(0));

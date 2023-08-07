@@ -25,6 +25,18 @@ void Canvas::drawPoint(int x, int y, Color color)
 	frame->pixels[p] = Color::occludeFast(color.val, frame->pixels[p]); //color.occludeFast(frame->pixels[p]);
 }
 
+void lerpDrawPoint(Point p, float size, Color color = Color::BLACK)
+{
+	int x0, x1, y0, y1;
+	x0 = floor(p.x);	y0 = floor(p.y);
+	x1 = ceil(p.x);		y1 = ceil(p.y);
+
+	float t = p.x - x0;
+	float s = p.y - y0;
+
+	
+}
+
 void Canvas::drawLine(int x0, int y0, int x1, int y1, Color color)
 {
 	float rise = (y1 - y0);
