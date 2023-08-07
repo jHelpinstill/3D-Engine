@@ -60,7 +60,7 @@ void TextBox::drawChar(Canvas& canvas, char c)
 		break;
 	case '\n':
 		cursor_x = 0;
-		cursor_y += 12 * scale;
+		cursor_y += 12;
 		return;
 	default:
 		break;
@@ -68,17 +68,19 @@ void TextBox::drawChar(Canvas& canvas, char c)
 	for (int i = width_reduce; i < 4; i++) for (int j = 0; j < 8; j++)
 		if ((letters[c].bytes[0] << j + i * 8) & 0x80000000)
 		{
-			for (int k = 0; k < scale; k++) for (int l = 0; l < scale; l++)
-				canvas.drawPoint(x + cursor_x + i * scale + k, y + cursor_y + (j + tail_shift) * scale + l, color);
+			canvas.lerpDrawPoint(Point(x + (cursor_x + i) * scale, y + (cursor_y + j + tail_shift) * scale), scale, color);
+			//for (int k = 0; k < scale; k++) for (int l = 0; l < scale; l++)
+			//	canvas.drawPoint(x + cursor_x + i * scale + k, y + cursor_y + (j + tail_shift) * scale + l, color);
 		}
 	if (!width_reduce)
 		for (int j = 0; j < 8; j++)
 			if ((letters[c].bytes[1] << j) & 0x80000000)
 			{
-				for (int k = 0; k < scale; k++) for (int l = 0; l < scale; l++)
-					canvas.drawPoint(x + cursor_x + 4 * scale + k, y + cursor_y + (j + tail_shift) * scale + l, color);
+				canvas.lerpDrawPoint(Point(x + (cursor_x + 4) * scale, y + (cursor_y + j) * scale), scale, color);
+				//for (int k = 0; k < scale; k++) for (int l = 0; l < scale; l++)
+				//	canvas.drawPoint(x + cursor_x + 4 * scale + k, y + cursor_y + (j + tail_shift) * scale + l, color);
 			}
-	cursor_x += scale * 6;
+	cursor_x += 6;
 }
 
 void TextBox::draw(Canvas &canvas)
