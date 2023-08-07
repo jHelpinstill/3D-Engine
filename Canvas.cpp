@@ -57,7 +57,7 @@ void Canvas::lerpDrawPoint(Point p, float size, Color color)
 	x1 = ceil(p.x + radius);
 
 	y0 = floor(p.y - radius);
-	y1 = floor(p.y + radius);
+	y1 = ceil(p.y + radius);
 
 	if (x0 < 0) return;
 	if (x1 > frame->width) return;
@@ -65,10 +65,10 @@ void Canvas::lerpDrawPoint(Point p, float size, Color color)
 	if (y1 > frame->height) return;
 
 	float t0, t1, s0, s1;
-	t0 = (p.x - radius) - x0;
-	t1 = x1 - (p.x + radius);
-	s0 = (p.y - radius) - y0;
-	s1 = y1 - (p.y + radius);
+	t0 = 1 - ((p.x - radius) - x0);
+	t1 = 1 - (x1 - (p.x + radius));
+	s0 = 1 - ((p.y - radius) - y0);
+	s1 = 1 - (y1 - (p.y + radius));
 
 	int opacity = 255 - color.getAlpha();
 
