@@ -38,6 +38,51 @@ void TextBox::setColor(Color color)
 	this->color = color;
 }
 
+void TextBox::drawChar(Canvas &canvas, char c)
+{
+	int tail_shift = 0;
+	int width_reduce = 0;
+	switch(c)
+	{
+		case 'g':
+		case 'p':
+		case 'q':
+		case 'y':
+			tail_shift = 3;
+			break;
+		case ',':
+		case 'j':
+			tail_shift = 1;
+			break;
+		case 'i':
+		case 'l':
+			width_reduce = 0;
+			break;
+		case '\n':
+			cursor_x = 0;
+			cursor_y += 12 * scale;
+			return;
+		default:
+			break;
+	}
+
+	for(int i = width_reduce; i < 4; i++) for(int j = 0; j < 8; j++)
+		if((letters[text[c]].bytes[0] << j + i * 8) & 0x80000000)
+		{
+			for(int k = 0; k < scale; k++) for(int l = 0; l < scale; l++)
+				canvas.drawPoint(x + cursor_x + i * scale + k, y + cursor_y + (j + tail_shift) * scale + l, color);
+		}
+
+	if(!width_reduce)
+		for(int j = 0; j < 8; j++)
+			if((letters[text[c]].bytes[1] << j) & 0x80000000)
+			{
+				for(int k = 0; k < scale; k++) for(int l = 0; l < scale; l++)
+					canvas.drawPoint(x + cursor_x + 4 * scale + k,y + cursor_y + (j + tail_shift) * scale + l, color);
+			}
+	cursor_x += scale * 6;
+}
+
 void TextBox::draw(Canvas &canvas)
 {
 //	std::cout << "drawing text: ";
@@ -47,47 +92,47 @@ void TextBox::draw(Canvas &canvas)
 	int length = this->text.length();
 	for(int c = 0; c < length; c++)
 	{
-//		std::cout << "	drawing '" << text[c] << "'" << std::endl;
-		int tail_shift = 0;
-		int width_reduce = 0;
-		switch(text[c])
-		{
-			case 'g':
-			case 'p':
-			case 'q':
-			case 'y':
-				tail_shift = 3;
-				break;
-			case ',':
-			case 'j':
-				tail_shift = 1;
-				break;
-			case 'i':
-			case 'l':
-				width_reduce = 0;
-				break;
-			case '\n':
-				cursor_x = 0;
-				cursor_y += 12 * scale;
-				continue;
-			default:
-				break;
-		}
-		for(int i = width_reduce; i < 4; i++) for(int j = 0; j < 8; j++)
-			if((letters[text[c]].bytes[0] << j + i * 8) & 0x80000000)
-			{
-				for(int k = 0; k < scale; k++) for(int l = 0; l < scale; l++)
-					canvas.drawPoint(x + cursor_x + i * scale + k, y + cursor_y + (j + tail_shift) * scale + l, color);
-			}
-		if(!width_reduce)
-			for(int j = 0; j < 8; j++)
-				if((letters[text[c]].bytes[1] << j) & 0x80000000)
-				{
-					for(int k = 0; k < scale; k++) for(int l = 0; l < scale; l++)
-						canvas.drawPoint(x + cursor_x + 4 * scale + k,y + cursor_y + (j + tail_shift) * scale + l, color);
-				}
-		cursor_x += scale * 6;
-	}
+////		std::cout << "	drawing '" << text[c] << "'" << std::endl;
+//		int tail_shift = 0;
+//		int width_reduce = 0;
+//		switch(text[c])
+//		{
+//			case 'g':
+//			case 'p':
+//			case 'q':
+//			case 'y':
+//				tail_shift = 3;
+//				break;
+//			case ',':
+//			case 'j':
+//				tail_shift = 1;
+//				break;
+//			case 'i':
+//			case 'l':
+//				width_reduce = 0;
+//				break;
+//			case '\n':
+//				cursor_x = 0;
+//				cursor_y += 12 * scale;
+//				continue;
+//			default:
+//				break;
+//		}
+//		for(int i = width_reduce; i < 4; i++) for(int j = 0; j < 8; j++)
+//			if((letters[text[c]].bytes[0] << j + i * 8) & 0x80000000)
+//			{
+//				for(int k = 0; k < scale; k++) for(int l = 0; l < scale; l++)
+//					canvas.drawPoint(x + cursor_x + i * scale + k, y + cursor_y + (j + tail_shift) * scale + l, color);
+//			}
+//		if(!width_reduce)
+//			for(int j = 0; j < 8; j++)
+//				if((letters[text[c]].bytes[1] << j) & 0x80000000)
+//				{
+//					for(int k = 0; k < scale; k++) for(int l = 0; l < scale; l++)
+//						canvas.drawPoint(x + cursor_x + 4 * scale + k,y + cursor_y + (j + tail_shift) * scale + l, color);
+//				}
+//		cursor_x += scale * 6;
+//	}
 	cursor_x = 0;
 	cursor_y = 0;
 }
@@ -102,7 +147,7 @@ int TextBox::getScale()
 	return scale;
 }
 
-void TextBox::setScale(int scale)
+void TextBox::setScale(float scale)
 {
 	this->scale = scale;
 }
