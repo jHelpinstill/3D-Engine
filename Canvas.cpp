@@ -28,12 +28,14 @@ void Canvas::drawPoint(int x, int y, Color color)
 void lerpDrawPoint(Point p, float size, Color color = Color::BLACK)
 {
 	int x0, x1, y0, y1;
-	x0 = floor(p.x);	y0 = floor(p.y);
-	x1 = ceil(p.x);		y1 = ceil(p.y);
 
-	float t = p.x - x0;
-	float s = p.y - y0;
+	x0 = floor(p.x - size / 2);
+	x1 = ceil(p.x + size / 2);
 
+	y0 = floor(p.y - size / 2);
+	y1 = floor(p.y + size / 2);
+
+	//for (int) {}
 	
 }
 
