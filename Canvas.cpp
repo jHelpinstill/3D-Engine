@@ -25,6 +25,12 @@ void Canvas::drawPoint(int x, int y, Color color)
 	frame->pixels[p] = Color::occludeFast(color.val, frame->pixels[p]); //color.occludeFast(frame->pixels[p]);
 }
 
+void Canvas::drawNextPoint(Color color)
+{
+	frame->pixels[cursor] = Color::occludeFast(color.val, frame->pixels[cursor]);
+	cursor++;
+}
+
 void lerpDrawPoint(Point p, float size, Color color = Color::BLACK)
 {
 	int x0, x1, y0, y1;

@@ -15,6 +15,8 @@ class Canvas
 {
 private:
 	Frame* frame = nullptr;
+
+	int cursor = 0;
 	
 	void swap(int &a, int &b);
 	void swap(float &a, float &b);
@@ -24,6 +26,9 @@ private:
 	void fillLowerTri(int x0, int x1, int x2, int y0, int y1, Color (*colorFunc)(int, int));
 	
 	bool updated = false;
+
+	void drawNextPoint(Color color);
+	void setCursor(int x, int y);
 	
 	static Color defaultColorFunc(int x, int y);
 	static Color default_color;
