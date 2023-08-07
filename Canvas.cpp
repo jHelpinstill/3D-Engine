@@ -36,18 +36,78 @@ void Canvas::setCursor(int x, int y)
 	cursor = x + ((frame->height - 1) - y) * frame->width;
 }
 
-void lerpDrawPoint(Point p, float size, Color color = Color::BLACK)
+void Canvas::lerpDrawPoint(Point p, float size, Color color = Color::BLACK)
 {
 	int x0, x1, y0, y1;
+	float radius = size / 2;
 
-	x0 = floor(p.x - size / 2);
-	x1 = ceil(p.x + size / 2);
+	x0 = floor(p.x - radius);
+	x1 = ceil(p.x + radius);
 
-	y0 = floor(p.y - size / 2);
-	y1 = floor(p.y + size / 2);
+	y0 = floor(p.y - radius);
+	y1 = floor(p.y + radius);
 
-	//for (int) {}
+	float t0, t1, s0, s1;
+	t0 = (p.x - radius) - x0;
+	t1 = x1 - (p.x + radius);
+	s0 = (p.y - radius) - y0;
+	s1 = y1 - (p.y + radius);
+
+	int opacity = 255 - color.getAlpha();
+
+	if (size > 1)
+	{
+		// body
+		fillRect(x0 + 1, y0 + 1, x1 - x0 - 2, y1 - y0 - 2, color);
+
+		// top edge
+		color.setAlpha(opacity * s0);
+		setCursor(x0 + 1, y0);
+		for (int i = x0 + 1; i < x1 - 1; i++)
+			drawNextPoint(color);
+
+		// bottom edge
+		color.setAlpha(opacity * s1);
+		setCursor(x0 + 1, y1 - 1);
+		for (int i = x0 + 1; i < x1 - 1; i++)
+			drawNextPoint(color);
+
+		// left edge
+		color.setAlpha(opacity * t0);
+		for (int i = y0 + 1; i < y1 - 1; i++)
+		{
+			setCursor(x0, i);
+			drawNextPoint(color);
+		}
+
+		// right edge
+		color.setAlpha(opacity * t1);
+		for (int i = y0 + 1; i < y1 - 1; i++)
+		{
+			setCursor(x1 - 1, i);
+			drawNextPoint(color);
+		}
+	}
+
+	// top left corner
+	color.setAlpha(opacity * (1 - (t0 * s0)));
+	setCursor(x0, y0);
+	drawNextPoint(color);
+
+	// top right corner
+	color.setAlpha(opacity * (1 - (t1 * s0)));
+	setCursor(x1 - 1, y0);
+	drawNextPoint(color);
 	
+	// bottom left corner
+	color.setAlpha(opacity * (1 - (t0 * s1)));
+	setCursor(x0, y1 - 1);
+	drawNextPoint(color);
+	
+	// bottom right corner
+	color.setAlpha(opacity * (1 - (t1 * s1)));
+	setCursor(x1 - 1, y1 - 1);
+	drawNextPoint(color);
 }
 
 void Canvas::drawLine(int x0, int y0, int x1, int y1, Color color)
