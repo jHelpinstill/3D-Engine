@@ -66,7 +66,25 @@ void doText(Canvas& canvas, float dt)
 
 void textScalingTest(Canvas& canvas, MouseInfo& mouse, KeyInfo& keyboard)
 {
-	static Button increase(300, 300, 50, 50, "FWD");
+	static Button decrease(Point(0.5, 0.8), -100, 0, 50, 50, "-");
+	static Button increase(Point(0.5, 0.8), 100, 0, 50, 50, "+");
+
+	static TextBox text(300, 100, "A", 2);
+	static TextBox scale_text(300, 200);
+	static float scale = 2;
+
+	canvas.fill(Color::WHITE);
+
+	text.draw(canvas);
+	decrease.draw(canvas, mouse);
+	increase.draw(canvas, mouse);
+
+	if (decrease.clicked)
+		scale -= 0.1;
+	if (increase.clicked)
+		scale += 0.1;
+	scale_text.print(scale);
+	scale_text.draw(canvas);
 }
 
 void render(Frame &frame, Camera &camera, MouseInfo &mouse, KeyInfo &keyboard, std::vector<Mesh*> &mesh_list)
