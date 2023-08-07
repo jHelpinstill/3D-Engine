@@ -19,15 +19,13 @@ private:
 	int x = 0;
 	int y = 0;
 	int width = -1;
-	float scale = 2;
+	int scale = 2;
 	std::string text;
 	Color color = 0x0;
 	
 	static LetterBits letters[128];
 	int cursor_x = 0;
 	int cursor_y = 0;
-
-	void drawChar(Canvas &canvas, char c);
 	
 public:
 	TextBox(){}
@@ -37,12 +35,21 @@ public:
 	TextBox(int x, int y, std::string text, int scale, Color color);
 	
 	void setPos(int x, int y);
-	void setScale(float scale);
+	void setScale(int scale);
 	void setColor(Color color);
 	
 	void print(const std::string str);
 	void print(double val);
 	void print(int val);
+//	template <typename T>
+//	inline void print(T o)
+//	{
+//		std::stringstream s;
+//		std::string str;
+//		s << o;
+//		s >> str;
+//		this->print(str);
+//	}
 	
 	void clear();
 	void draw(Canvas &canvas);
