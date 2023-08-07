@@ -6,7 +6,7 @@ Button::Button(int x, int y, int width, int height)
 	setPos(x, y);
 	setSize(width, height);
 }
-Button::Button(int x, int y, int width, int height, const char* text)
+Button::Button(int x, int y, int width, int height, std::string text)
 {
 	setPos(x, y);
 	setSize(width, height);
@@ -28,8 +28,41 @@ Button::Button(int x, int y, int width, int height, Color fill_color, Color bord
 
 void Button::setPos(int x, int y)
 {
-	this->x = x;
-	this->y = y;
+	right_aligned = false;
+	bottom_aligned = false;
+	center_aligned_width = false;
+	center_aligned_height = false;
+
+	switch (x)
+	{
+	case LEFT:
+		this->x = 0;
+		break;
+	case RIGHT:
+		right_aligned = true;
+		break;
+	case CENTER:
+		this->center_aligned_width = true;
+		break;
+	default:
+		this->x = x;
+		break;
+	}
+	switch (y)
+	{
+	case TOP:
+		this->y = 0;
+		break;
+	case BOTTOM:
+		this->bottom_aligned = true;
+		break;
+	case CENTER:
+		this->center_aligned_height = true;
+		break;
+	default:
+		this->y = y;
+		break;
+	}
 	setTextPos();
 }
 void Button::setSize(int width, int height)
@@ -53,7 +86,7 @@ void Button::setBorderColor(Color color)
 	this->border_color = color;
 }
 
-void Button::setText(const char* text)
+void Button::setText(std::string text)
 {
 	this->text.print(text);
 	setTextPos();
@@ -108,3 +141,9 @@ void Button::debug_print()
 	std::cout << "color: " << std::hex << fill_color.val << ", " << border_color.val << std::dec << std::endl;
 	std::cout << std::endl;
 }
+
+const int Button::LEFT = -1;
+const int Button::RIGHT = -2;
+const int Button::TOP = -1;
+const int Button::BOTTOM = -2;
+const int Button::CENTER = -3;
