@@ -21,7 +21,7 @@ public:
 	static int occludeFast(int color1, int color2);
 	Color occlude(Color color);
 
-	static Color average(Color* colors, int num_colors);
+	static Color average(Color* colors, int num_colors, float* weights = nullptr);
 	
 	int val;
 	
