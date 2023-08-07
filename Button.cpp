@@ -26,44 +26,32 @@ Button::Button(int x, int y, int width, int height, Color fill_color, Color bord
 	setBorderColor(border_color);
 }
 
+Button::Button(Point relative_pos, int offset_x, int offset_y, int width, int height, std::string text)
+{
+	setRelativePos(relative_pos.x, relative_pos.y);
+	setOffset(offset_x, offset_y);
+	setSize(width, height);
+	setText(text);
+
+	pos_is_relative = true;
+}
+
 void Button::setPos(int x, int y)
 {
-	right_aligned = false;
-	bottom_aligned = false;
-	center_aligned_width = false;
-	center_aligned_height = false;
-
-	switch (x)
-	{
-	case LEFT:
-		this->x = 0;
-		break;
-	case RIGHT:
-		right_aligned = true;
-		break;
-	case CENTER:
-		this->center_aligned_width = true;
-		break;
-	default:
-		this->x = x;
-		break;
-	}
-	switch (y)
-	{
-	case TOP:
-		this->y = 0;
-		break;
-	case BOTTOM:
-		this->bottom_aligned = true;
-		break;
-	case CENTER:
-		this->center_aligned_height = true;
-		break;
-	default:
-		this->y = y;
-		break;
-	}
+	this->x = x;
+	this->y = y;
 	setTextPos();
+}
+void Button::setRelativePos(float x, float y)
+{
+	this->relative_pos = Point(x, y);
+	if (!pos_is_relative)
+		setPos(0, 0);
+	pos_is_relative = true;
+}
+void Button::setOffset(int x, int y)
+{
+	setPos(x, y);
 }
 void Button::setSize(int width, int height)
 {
@@ -109,16 +97,25 @@ void Button::snapRight(int y, int frame_width)
 
 void Button::draw(Canvas &canvas, MouseInfo &mouse)
 {
+	int screen_x = x;
+	int screen_y = y;
+
+	if (pos_is_relative)
+	{
+		screen_x = canvas.getWidth() * relative_pos.x + x;
+		screen_y = canvas.getHeight() * relative_pos.y + y;
+	}
+
 	checkMouse(mouse);
 	if(!pressed)
 	{
-		canvas.fillRect(x, y, width, height, fill_color);
-		canvas.drawRect(x, y, width, height, border_color);
+		canvas.fillRect(screen_x, screen_y, width, height, fill_color);
+		canvas.drawRect(screen_x, screen_y, width, height, border_color);
 	}
 	else
 	{
-		canvas.fillRect(x, y, width, height, border_color);
-		canvas.drawRect(x, y, width, height, fill_color);
+		canvas.fillRect(screen_x, screen_y, width, height, border_color);
+		canvas.drawRect(screen_x, screen_y, width, height, fill_color);
 	}
 	text.draw(canvas);
 }
@@ -141,9 +138,3 @@ void Button::debug_print()
 	std::cout << "color: " << std::hex << fill_color.val << ", " << border_color.val << std::dec << std::endl;
 	std::cout << std::endl;
 }
-
-const int Button::LEFT = -1;
-const int Button::RIGHT = -2;
-const int Button::TOP = -1;
-const int Button::BOTTOM = -2;
-const int Button::CENTER = -3;

@@ -14,10 +14,8 @@ private:
 	int width;
 	int height;
 
-	bool right_aligned = false;
-	bool bottom_aligned = false;
-	bool center_aligned_width = false;
-	bool center_aligned_height = false;
+	Point relative_pos;
+	bool pos_is_relative = false;
 	
 	Color fill_color = Color(0xd0d0d0);
 	Color border_color = Color(0x2f2f2f);
@@ -37,9 +35,11 @@ public:
 	Button(int x, int y, int width, int height, std::string text);
 	Button(int x, int y, int width, int height, Color fill_color);
 	Button(int x, int y, int width, int height, Color fill_color, Color border_color);
-	Button(Point screen_ratio, Point offset, int width, int height, std::string text);
+	Button(Point relative_pos, int offset_x, int offset_y, int width, int height, std::string text);
 	
 	void setPos(int x, int y);
+	void setRelativePos(float x, float y);
+	void setOffset(int x, int y);
 	void setSize(int width, int height);
 	void setColor(Color color);
 	void setFillColor(Color color);
@@ -50,12 +50,6 @@ public:
 	
 	void draw(Canvas &canvas, MouseInfo &mouse);
 	void debug_print();
-
-	const static int LEFT;
-	const static int RIGHT;
-	const static int TOP;
-	const static int BOTTOM;
-	const static int CENTER;
 };
 
 #endif
