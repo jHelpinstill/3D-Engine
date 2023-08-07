@@ -71,18 +71,31 @@ void textScalingTest(Canvas& canvas, MouseInfo& mouse, KeyInfo& keyboard)
 
 	static TextBox text(300, 100, "A", 2);
 	static TextBox scale_text(300, 200);
-	static float scale = 2;
+	static float scale = 1;
 
+	mouse.release();
 	canvas.fill(Color::WHITE);
 
-	text.draw(canvas);
+	//text.draw(canvas);
+	Point mouse_c(300, 300);
+	canvas.drawCircle(mouse_c, 10);
+	canvas.lerpDrawPoint(Point(400 + (mouse.x - mouse_c.x) / 50.0, 400 + (mouse.y - mouse_c.y) / 50.0), scale);
 	decrease.draw(canvas, mouse);
 	increase.draw(canvas, mouse);
+
+	// draw fat pixels
+	
+	int buffer[400];
+	canvas.getFrameRegion(390, 390, 20, 20, buffer);
+	for (int i = 0; i < 20; i++) for (int j = 0; j < 20; j++)
+		canvas.fillRect(i * 10, j * 10, 10, 10, buffer[j * 20 + i]);
+	canvas.drawRect(0, 0, 200, 200);
 
 	if (decrease.clicked)
 		scale -= 0.1;
 	if (increase.clicked)
 		scale += 0.1;
+	scale_text.clear();
 	scale_text.print(scale);
 	scale_text.draw(canvas);
 }
@@ -99,7 +112,7 @@ void render(Frame &frame, Camera &camera, MouseInfo &mouse, KeyInfo &keyboard, s
 
 	//camera.drawHorizon(canvas, Color(0x50ff50), Color(0x8080ff));
 	//camera.draw(canvas, mesh_list[0], &light);
-
+	//
 	//doButtons(canvas, player, mouse, frame.dt);
 	//doText(canvas, frame.dt);
 
