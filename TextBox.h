@@ -26,6 +26,8 @@ private:
 	static LetterBits letters[128];
 	int cursor_x = 0;
 	int cursor_y = 0;
+
+	void drawChar(Canvas& canvas, char c);
 	
 public:
 	TextBox(){}
@@ -41,15 +43,6 @@ public:
 	void print(const std::string str);
 	void print(double val);
 	void print(int val);
-//	template <typename T>
-//	inline void print(T o)
-//	{
-//		std::stringstream s;
-//		std::string str;
-//		s << o;
-//		s >> str;
-//		this->print(str);
-//	}
 	
 	void clear();
 	void draw(Canvas &canvas);
