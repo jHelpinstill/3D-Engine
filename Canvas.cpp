@@ -78,31 +78,31 @@ void Canvas::lerpDrawPoint(Point p, float size, Color color)
 		fillRect(x0 + 1, y0 + 1, (x1 - x0) - 2, (y1 - y0) - 2, color);
 
 		// top edge
-		color.setAlpha(opacity * s0);
+		color.setAlpha(opacity * (1 - s0));
 		setCursor(x0 + 1, y0);
 		for (int i = x0 + 1; i < x1 - 1; i++)
-			//drawNextPoint(color);
+			drawNextPoint(color);
 
 		// bottom edge
-		color.setAlpha(opacity * s1);
+		color.setAlpha(opacity * (1 - s1));
 		setCursor(x0 + 1, y1 - 1);
 		for (int i = x0 + 1; i < x1 - 1; i++)
-			//drawNextPoint(color);
+			drawNextPoint(color);
 
 		// left edge
-		color.setAlpha(opacity * t0);
+		color.setAlpha(opacity * (1 - t0));
 		for (int i = y0 + 1; i < y1 - 1; i++)
 		{
 			setCursor(x0, i);
-			//drawNextPoint(color);
+			drawNextPoint(color);
 		}
 
 		// right edge
-		color.setAlpha(opacity * t1);
+		color.setAlpha(opacity * (1 - t1));
 		for (int i = y0 + 1; i < y1 - 1; i++)
 		{
 			setCursor(x1 - 1, i);
-			//drawNextPoint(color);
+			drawNextPoint(color);
 		}
 	}
 
