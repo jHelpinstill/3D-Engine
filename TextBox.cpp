@@ -12,14 +12,14 @@ TextBox::TextBox(int x, int y, std::string text)
 	setPos(x, y);
 }
 
-TextBox::TextBox(int x, int y, std::string text, int scale)
+TextBox::TextBox(int x, int y, std::string text, float scale)
 {
 	print(text);
 	setPos(x, y);
 	setScale(scale);
 }
 
-TextBox::TextBox(int x, int y, std::string text, int scale, Color color)
+TextBox::TextBox(int x, int y, std::string text, float scale, Color color)
 {
 	print(text);
 	setPos(x, y);
@@ -105,12 +105,12 @@ int TextBox::getLength()
 	return text.length();
 }
 
-int TextBox::getScale()
+float TextBox::getScale()
 {
 	return scale;
 }
 
-void TextBox::setScale(int scale)
+void TextBox::setScale(float scale)
 {
 	this->scale = scale;
 }

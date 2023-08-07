@@ -19,7 +19,7 @@ private:
 	int x = 0;
 	int y = 0;
 	int width = -1;
-	int scale = 2;
+	float scale = 2;
 	std::string text;
 	Color color = 0x0;
 	
@@ -33,11 +33,11 @@ public:
 	TextBox(){}
 	TextBox(int x, int y);
 	TextBox(int x, int y, std::string text);
-	TextBox(int x, int y, std::string text, int scale);
-	TextBox(int x, int y, std::string text, int scale, Color color);
+	TextBox(int x, int y, std::string text, float scale);
+	TextBox(int x, int y, std::string text, float scale, Color color);
 	
 	void setPos(int x, int y);
-	void setScale(int scale);
+	void setScale(float scale);
 	void setColor(Color color);
 	
 	void print(const std::string str);
@@ -47,7 +47,7 @@ public:
 	void clear();
 	void draw(Canvas &canvas);
 	int getLength();
-	int getScale();
+	float getScale();
 };
 
 #endif
