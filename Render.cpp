@@ -64,24 +64,29 @@ void doText(Canvas& canvas, float dt)
 	info.draw(canvas);
 }
 
+void textScalingTest(Canvas& canvas, MouseInfo& mouse, KeyInfo& keyboard)
+{
+	static Button increase(300, 300, 50, 50, "FWD");
+}
+
 void render(Frame &frame, Camera &camera, MouseInfo &mouse, KeyInfo &keyboard, std::vector<Mesh*> &mesh_list)
 {	
 	static PointLight light(Vec3(2, 2, 2), Color::WHITE);
 	static PlayerController player(&camera, &keyboard, &mouse);
-	
-	
 	
 	Canvas canvas(&frame);
 	player.update(frame.dt);
 
 	///// PLACE RENDER CODE HERE (PAINT TO CANVAS) /////
 
-	camera.drawHorizon(canvas, Color(0x50ff50), Color(0x8080ff));
-	camera.draw(canvas, mesh_list[0], &light);
+	//camera.drawHorizon(canvas, Color(0x50ff50), Color(0x8080ff));
+	//camera.draw(canvas, mesh_list[0], &light);
 
-	doButtons(canvas, player, mouse, frame.dt);
-	doText(canvas, frame.dt);
-	
+	//doButtons(canvas, player, mouse, frame.dt);
+	//doText(canvas, frame.dt);
+
+	textScalingTest(canvas, mouse, keyboard);
+
 	if(keyboard.keyPressed(27))
 		mouse.release();
 
