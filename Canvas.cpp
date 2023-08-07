@@ -31,6 +31,11 @@ void Canvas::drawNextPoint(Color color)
 	cursor++;
 }
 
+void Canvas::setCursor(int x, int y)
+{
+	cursor = x + ((frame->height - 1) - y) * frame->width;
+}
+
 void lerpDrawPoint(Point p, float size, Color color = Color::BLACK)
 {
 	int x0, x1, y0, y1;
