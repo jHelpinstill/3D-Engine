@@ -53,11 +53,11 @@ void Canvas::lerpDrawPoint(Point p, float size, Color color)
 	int x0, x1, y0, y1;
 	float radius = size / 2;
 
-	x0 = floor(p.x - radius);
-	x1 = ceil(p.x + radius);
+	x0 = (int)(p.x - radius);
+	x1 = (int)(p.x + radius + 1);
 
-	y0 = floor(p.y - radius);
-	y1 = ceil(p.y + radius);
+	y0 = (int)(p.y - radius);
+	y1 = (int)(p.y + radius + 1);
 
 	if (x0 < 0) return;
 	if (x1 > frame->width) return;
@@ -75,26 +75,26 @@ void Canvas::lerpDrawPoint(Point p, float size, Color color)
 	if (size > 1)
 	{
 		// body
-		fillRect(x0 + 1, y0 + 1, x1 - x0 - 2, y1 - y0 - 2, color);
+		fillRect(x0 + 1, y0 + 1, (x1 - x0) - 2, (y1 - y0) - 2, color);
 
 		// top edge
 		color.setAlpha(opacity * s0);
 		setCursor(x0 + 1, y0);
 		for (int i = x0 + 1; i < x1 - 1; i++)
-			drawNextPoint(color);
+			//drawNextPoint(color);
 
 		// bottom edge
 		color.setAlpha(opacity * s1);
 		setCursor(x0 + 1, y1 - 1);
 		for (int i = x0 + 1; i < x1 - 1; i++)
-			drawNextPoint(color);
+			//drawNextPoint(color);
 
 		// left edge
 		color.setAlpha(opacity * t0);
 		for (int i = y0 + 1; i < y1 - 1; i++)
 		{
 			setCursor(x0, i);
-			drawNextPoint(color);
+			//drawNextPoint(color);
 		}
 
 		// right edge
@@ -102,7 +102,7 @@ void Canvas::lerpDrawPoint(Point p, float size, Color color)
 		for (int i = y0 + 1; i < y1 - 1; i++)
 		{
 			setCursor(x1 - 1, i);
-			drawNextPoint(color);
+			//drawNextPoint(color);
 		}
 	}
 
@@ -215,15 +215,15 @@ void Canvas::fillRect(int x, int y, int width, int height, Color color)
 	if (x >= frame->width) return;
 	if (y >= frame->height) return;
 
-	int x1 = x + width + 1;
-	int y1 = y + height + 1;
+	int x1 = x + width;
+	int y1 = y + height;
 	if (x1 < 0) return;
 	if (y1 < 0) return;
 
 	if (x < 0) x = 0;
 	if (y < 0) y = 0;
-	if (x1 > frame->width) x1 = frame->width;
-	if (y1 > frame->height) y1 = frame->height;
+	if (x1 >= frame->width) x1 = frame->width - 1;
+	if (y1 >= frame->height) y1 = frame->height - 1;
 
 	for (int i = y; i < y1; i++)
 	{
