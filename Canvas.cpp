@@ -16,6 +16,18 @@ int Canvas::getHeight()
 {
 	return frame->height;
 }
+
+void Canvas::getFrameRegion(int x, int y, int width, int height, int* buffer)
+{
+	// add safety features!
+
+	for (int j = 0; j < height; j++)
+	{
+		int p = x + ((frame->height - 1) - (y + j)) * frame->width;
+		for (int i = 0; i < width; i++)
+			buffer[j * width + i] = frame->pixels[p + i];
+	}
+}
 	
 void Canvas::drawPoint(int x, int y, Color color)
 {
@@ -36,7 +48,7 @@ void Canvas::setCursor(int x, int y)
 	cursor = x + ((frame->height - 1) - y) * frame->width;
 }
 
-void Canvas::lerpDrawPoint(Point p, float size, Color color = Color::BLACK)
+void Canvas::lerpDrawPoint(Point p, float size, Color color)
 {
 	int x0, x1, y0, y1;
 	float radius = size / 2;
@@ -46,6 +58,11 @@ void Canvas::lerpDrawPoint(Point p, float size, Color color = Color::BLACK)
 
 	y0 = floor(p.y - radius);
 	y1 = floor(p.y + radius);
+
+	if (x0 < 0) return;
+	if (x1 > frame->width) return;
+	if (y0 < 0) return;
+	if (y1 > frame->height) return;
 
 	float t0, t1, s0, s1;
 	t0 = (p.x - radius) - x0;

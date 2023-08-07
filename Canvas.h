@@ -39,6 +39,7 @@ public:
 	
 	int getWidth();
 	int getHeight();
+	void getFrameRegion(int x, int y, int width, int height, int* buffer);
 	
 	void drawPoint(int x, int y, Color color = Color(0));
 	void drawLine(int x0, int y0, int x1, int y1, Color color = Color(0));
