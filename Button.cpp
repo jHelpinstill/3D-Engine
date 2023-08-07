@@ -51,7 +51,8 @@ void Button::setRelativePos(float x, float y)
 }
 void Button::setOffset(int x, int y)
 {
-	setPos(x, y);
+	this->offset_x = x;
+	this->offset_y = y;
 }
 void Button::setSize(int width, int height)
 {
@@ -97,25 +98,23 @@ void Button::snapRight(int y, int frame_width)
 
 void Button::draw(Canvas &canvas, MouseInfo &mouse)
 {
-	int screen_x = x;
-	int screen_y = y;
-
 	if (pos_is_relative)
 	{
-		screen_x = canvas.getWidth() * relative_pos.x + x;
-		screen_y = canvas.getHeight() * relative_pos.y + y;
+		x = canvas.getWidth() * relative_pos.x + offset_x;
+		y = canvas.getHeight() * relative_pos.y + offset_y;
+		setTextPos();
 	}
 
 	checkMouse(mouse);
 	if(!pressed)
 	{
-		canvas.fillRect(screen_x, screen_y, width, height, fill_color);
-		canvas.drawRect(screen_x, screen_y, width, height, border_color);
+		canvas.fillRect(x, y, width, height, fill_color);
+		canvas.drawRect(x, y, width, height, border_color);
 	}
 	else
 	{
-		canvas.fillRect(screen_x, screen_y, width, height, border_color);
-		canvas.drawRect(screen_x, screen_y, width, height, fill_color);
+		canvas.fillRect(x, y, width, height, border_color);
+		canvas.drawRect(x, y, width, height, fill_color);
 	}
 	text.draw(canvas);
 }
