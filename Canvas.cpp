@@ -130,13 +130,34 @@ void Canvas::drawRect(int x, int y, int width, int height, Color color)
 
 void Canvas::fillRect(int x, int y, int width, int height, Color color)
 {
-	for(int i = x; i < x + width; i++)
+	if (x >= frame->width) return;
+	if (y >= frame->height) return;
+
+	int x1 = x + width + 1;
+	int y1 = y + height + 1;
+	if (x1 < 0) return;
+	if (y1 < 0) return;
+
+	if (x < 0) x = 0;
+	if (y < 0) y = 0;
+	if (x1 > frame->width) x1 = frame->width;
+	if (y1 > frame->height) y1 = frame->height;
+
+	for (int i = y; i < y1; i++)
 	{
-		for(int j = y; j < y + height; j++)
-		{
-			drawPoint(i, j, color);
-		}
+		setCursor(x, i);
+		for (int j = x; j < x1; j++)
+			drawNextPoint(color);
 	}
+
+
+	//for(int i = x; i < x + width; i++)
+	//{
+	//	for(int j = y; j < y + height; j++)
+	//	{
+	//		drawPoint(i, j, color);
+	//	}
+	//}
 }
 
 void Canvas::fill(Color color)
