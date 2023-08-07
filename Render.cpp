@@ -4,7 +4,7 @@
 #include "Color.h"
 #include "PlayerController.h"
 
-void doButtons(Canvas &canvas, PlayerController &player, MouseInfo& mouse, float dt)
+void doButtons(Canvas &canvas, PlayerController &player, MouseInfo &mouse, float dt)
 {
 	static Button fwdButton(50, 100, 50, 50, "FWD");
 	static Button bkwdButton(50, 150, 50, 50, "BKWD");
@@ -51,14 +51,25 @@ void doButtons(Canvas &canvas, PlayerController &player, MouseInfo& mouse, float
 		mouse.capture();
 }
 
+void doText(Canvas& canvas, float dt)
+{
+	static TextBox info(0, 0, "Press 'esc' to release mouse", 2);
+	static TextBox fps(0, 20);
+
+	fps.setColor(Color::WHITE);
+	fps.clear();
+	fps.print(1.0 / dt); fps.print(" fps\n"); fps.print(dt * 1000); fps.print(" millis");
+	fps.draw(canvas);
+
+	info.draw(canvas);
+}
+
 void render(Frame &frame, Camera &camera, MouseInfo &mouse, KeyInfo &keyboard, std::vector<Mesh*> &mesh_list)
 {	
 	static PointLight light(Vec3(2, 2, 2), Color::WHITE);
 	static PlayerController player(&camera, &keyboard, &mouse);
 	
-	static TextBox info(0, 0, "Press 'esc' to release mouse", 2);
-	static TextBox fps(0, 20);
-	fps.setColor(Color::WHITE);
+	
 	
 	Canvas canvas(&frame);
 	player.update(frame.dt);
@@ -69,12 +80,9 @@ void render(Frame &frame, Camera &camera, MouseInfo &mouse, KeyInfo &keyboard, s
 	camera.draw(canvas, mesh_list[0], &light);
 
 	doButtons(canvas, player, mouse, frame.dt);
+	doText(canvas, frame.dt);
 	
 	if(keyboard.keyPressed(27))
 		mouse.release();
-	
-	fps.clear();
-	fps.print(1.0 / frame.dt); fps.print(" fps\n"); fps.print(frame.dt * 1000); fps.print(" millis");
-	fps.draw(canvas);
-	info.draw(canvas);
+
 }
