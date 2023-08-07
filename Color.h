@@ -20,6 +20,8 @@ public:
 	Color operator*(Color color);
 	static int occludeFast(int color1, int color2);
 	Color occlude(Color color);
+
+	static Color average(Color* colors, int num_colors);
 	
 	int val;
 	

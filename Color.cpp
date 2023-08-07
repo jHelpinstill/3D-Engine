@@ -1,4 +1,5 @@
 #include "Color.h"
+#include <cmath>
 
 Color::Color(int color)
 {
@@ -75,7 +76,28 @@ Color Color::operator*(Color color)
 	out.setR((getR() * color.getR()) / 255);
 	out.setG((getG() * color.getG()) / 255);
 	out.setB((getB() * color.getB()) / 255);
-	return color;
+	return out;
+}
+Color Color::average(Color* colors, int num_colors)
+{
+	int sq_sum_r = 0;
+	int sq_sum_g = 0;
+	int sq_sum_b = 0;
+
+	int r, g, b;
+	for (int i = 0; i < num_colors; i++)
+	{
+		r = colors[i].getR(); g = colors[i].getG(); b = colors[i].getB();
+		sq_sum_r += r * r;
+		sq_sum_g += g * g;
+		sq_sum_b += b * b;
+	}
+	
+	Color avg;
+	avg.setR(sqrt(sq_sum_r / num_colors));
+	avg.setG(sqrt(sq_sum_g / num_colors));
+	avg.setB(sqrt(sq_sum_g / num_colors));
+	return avg;
 }
 
 int Color::occludeFast(int color1, int color2)
