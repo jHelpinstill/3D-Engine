@@ -12,6 +12,12 @@ Button::Button(int x, int y, int width, int height, std::string text)
 	setSize(width, height);
 	setText(text);
 }
+Button::Button(int x, int y, int width, int height, TextBox* text_box)
+{
+	setPos(x, y);
+	setSize(width, height);
+	setTextBox(text_box);
+}
 Button::Button(int x, int y, int width, int height, Color color)
 {
 	setPos(x, y);
@@ -77,13 +83,22 @@ void Button::setBorderColor(Color color)
 
 void Button::setText(std::string text)
 {
-	this->text.print(text);
+	if (text_box == nullptr)
+		text_box = new TextBox();
+	text_box->print(text);
 	setTextPos();
 }
-
+void Button::setTextBox(TextBox* text_box)
+{
+	this->text_box = text_box;
+}
+TextBox* Button::getTextBox()
+{
+	return text_box;
+}
 void Button::setTextPos()
 {
-	text.setPos(x + width / 2 - text.getLength() * 6 * text.getScale() / 2 + text.getScale(), y + height / 2 - 4 * text.getScale());
+	text_box->setPos(x + width / 2 - text_box->getLength() * 6 * text_box->getScale() / 2 + text_box->getScale(), y + height / 2 - 4 * text_box->getScale());
 }
 
 void Button::snapBottom(int x, int frame_height)
@@ -116,7 +131,7 @@ void Button::draw(Canvas &canvas, MouseInfo &mouse)
 		canvas.fillRect(x, y, width, height, border_color);
 		canvas.drawRect(x, y, width, height, fill_color);
 	}
-	text.draw(canvas);
+	text_box->draw(canvas);
 }
 void Button::checkMouse(MouseInfo &mouse)
 {

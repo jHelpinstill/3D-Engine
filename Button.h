@@ -21,7 +21,7 @@ private:
 	Color border_color = Color(0x2f2f2f);
 	void checkMouse(MouseInfo &mouse);
 	
-	TextBox text;
+	TextBox* text_box = nullptr;
 	void setTextPos();
 	
 public:
@@ -33,6 +33,7 @@ public:
 	Button(){}
 	Button(int x, int y, int width, int height);
 	Button(int x, int y, int width, int height, std::string text);
+	Button(int x, int y, int width, int height, TextBox* text_box);
 	Button(int x, int y, int width, int height, Color fill_color);
 	Button(int x, int y, int width, int height, Color fill_color, Color border_color);
 	Button(Point relative_pos, int offset_x, int offset_y, int width, int height, std::string text);
@@ -44,7 +45,9 @@ public:
 	void setColor(Color color);
 	void setFillColor(Color color);
 	void setBorderColor(Color color);
+	void setTextBox(TextBox* text_box);
 	void setText(std::string text);
+	TextBox* getTextBox();
 	void snapBottom(int x, int frame_height);
 	void snapRight(int y, int frame_width);
 	
