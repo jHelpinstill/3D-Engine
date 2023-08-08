@@ -12,14 +12,13 @@ private:
 	int incrementX();
 	int incrementY(int x);
 	
-	
 public:
 	
 	PointLight();
 	PointLight(Vec3 pos, Color color);
 	
 	void beginLighting(int, int, Camera*, Vec3, Vec3);
-	Color findColor(int x, int y, Color base_color);
+	Color findColor(Vec3 transformed_point, Color base_color);
 };
 
 #endif

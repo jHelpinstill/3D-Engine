@@ -39,21 +39,22 @@ int PointLight::incrementY(int x)
 {
 	return 0;
 }
-Color PointLight::findColor(int x, int y, Color base_color)
+Color PointLight::findColor(Vec3 transformed_point, Color base_color)
 {
 	if(!current_tri_is_lit)
 		return base_color;
-	float a, b;
-	a = ((2 * x / (float)info.width) - 1) * info.FOV_value;
-	b = (info.height / (float)info.width - 2 * y / (float)info.width) * info.FOV_value;
-	
-	Vec3 v(1, a, b);
-	float v_sq_mag = v.sqMag();
-	float n_dot_v = Vec3::dot(info.dest_normal, v);
-	float denom = (v_sq_mag * info.d) / (n_dot_v * n_dot_v) - 2 * Vec3::dot(v, pos) / n_dot_v + pos_sq_mag;
-	Color color_out = color / denom;
+	//float a, b;
+	//a = ((2 * x / (float)info.width) - 1) * info.FOV_value;
+	//b = (info.height / (float)info.width - 2 * y / (float)info.width) * info.FOV_value;
+	//
+	//Vec3 v(1, a, b);
+	//float v_sq_mag = v.sqMag();
+	//float n_dot_v = Vec3::dot(info.dest_normal, v);
+	//float denom = (v_sq_mag * info.d) / (n_dot_v * n_dot_v) - 2 * Vec3::dot(v, pos) / n_dot_v + pos_sq_mag;
+	//Color color_out = color / denom;
 	
 //	std::cout << denom << std::endl;
 //	std::cout << std::hex << color_out.val << std::dec << std::endl;
-	return color_out * base_color;//(color_out + base_color).val;
+	float intensity = min_radius / (transformed_pos - transformed_point).mag();
+	return color * intensity;//(color_out + base_color).val;
 }

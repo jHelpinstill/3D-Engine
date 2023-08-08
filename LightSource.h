@@ -34,6 +34,7 @@ protected:
 	virtual int incrementX() { return 0; }
 	virtual int incrementY(int x) { return 0; }
 	bool current_tri_is_lit;
+	float min_radius;
 	
 public:
 	Vec3 pos;
@@ -42,7 +43,7 @@ public:
 	LightSource(){}
 	
 	virtual void beginLighting(int width, int height, Camera* camera, Vec3 dest_normal, Vec3 point_on_plane){}
-	virtual Color findColor(int x, int y, Color base_color) { return base_color; }
+	virtual Color findColor(Vec3 transformed_point, Color base_color) { return base_color; }
 	
 };
 
