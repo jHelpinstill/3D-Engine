@@ -6,15 +6,15 @@
 
 void doButtons(Canvas &canvas, PlayerController &player, MouseInfo &mouse, float dt)
 {
-	static Button fwdButton(50, 100, 50, 50, "FWD");
-	static Button bkwdButton(50, 150, 50, 50, "BKWD");
-	static Button leftButton(0, 150, 50, 50, "LEFT");
-	static Button rightButton(100, 150, 50, 50, "RIGHT");
-	static Button upButton(0, 100, 50, 50, "UP");
-	static Button downButton(100, 100, 50, 50, "DOWN");
-	static Button rotLeftButton(0, 200, 50, 50, "turnL");
-	static Button rotRightButton(100, 200, 50, 50, "turnR");
-	static Button captureMouseBut(0, 300, 200, 30, "capture mouse");
+	static Button fwdButton(50, 100, 50, 50, new TextBox(0, 0, "FWD", 1.5));
+	static Button bkwdButton(50, 150, 50, 50, new TextBox(0, 0, "BKWD", 1.5));
+	static Button leftButton(0, 150, 50, 50, new TextBox(0, 0, "LEFT", 1.5));
+	static Button rightButton(100, 150, 50, 50, new TextBox(0, 0, "RIGHT", 1.5));
+	static Button upButton(0, 100, 50, 50, new TextBox(0, 0, "UP", 1.5));
+	static Button downButton(100, 100, 50, 50, new TextBox(0, 0, "DOWN", 1.5));
+	static Button rotLeftButton(0, 200, 50, 50, new TextBox(0, 0, "turnL", 1.5));
+	static Button rotRightButton(100, 200, 50, 50, new TextBox(0, 0, "turnR", 1.5));
+	static Button captureMouseBut(0, 300, 200, 30, new TextBox(0, 0, "capture mouse", 1.5));
 
 	static Button transparentButton(500, 500, 200, 200, Color(0x80808080));
 	transparentButton.setPos(mouse.x - 100, mouse.y - 100);
@@ -69,7 +69,7 @@ void textScalingTest(Canvas& canvas, MouseInfo& mouse, KeyInfo& keyboard)
 	static Button decrease(Point(0.5, 0.8), -100, 0, 50, 50, "-");
 	static Button increase(Point(0.5, 0.8), 100, 0, 50, 50, "+");
 
-	static TextBox text(400, 400, "A", 2);
+	static TextBox text(395, 390, "A", 2);
 	static TextBox scale_text(300, 200);
 	static float scale = 2;
 
@@ -85,7 +85,6 @@ void textScalingTest(Canvas& canvas, MouseInfo& mouse, KeyInfo& keyboard)
 	increase.draw(canvas, mouse);
 
 	// draw fat pixels
-	
 	int buffer[400];
 	canvas.getFrameRegion(390, 390, 20, 20, buffer);
 	for (int i = 0; i < 20; i++) for (int j = 0; j < 20; j++)
@@ -111,13 +110,13 @@ void render(Frame &frame, Camera &camera, MouseInfo &mouse, KeyInfo &keyboard, s
 
 	///// PLACE RENDER CODE HERE (PAINT TO CANVAS) /////
 
-	//camera.drawHorizon(canvas, Color(0x50ff50), Color(0x8080ff));
-	//camera.draw(canvas, mesh_list[0], &light);
-	//
-	//doButtons(canvas, player, mouse, frame.dt);
-	//doText(canvas, frame.dt);
+	camera.drawHorizon(canvas, Color(0x50ff50), Color(0x8080ff));
+	camera.draw(canvas, mesh_list[0], &light);
+	
+	doButtons(canvas, player, mouse, frame.dt);
+	doText(canvas, frame.dt);
 
-	textScalingTest(canvas, mouse, keyboard);
+	//textScalingTest(canvas, mouse, keyboard);
 
 	if(keyboard.keyPressed(27))
 		mouse.release();
