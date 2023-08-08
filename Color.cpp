@@ -230,3 +230,4 @@ Color Color::G = Color(0x0000ff00);
 Color Color::B = Color(0x000000ff);
 Color Color::BLACK = Color(0x00000000);
 Color Color::WHITE = Color(0x00ffffff);
+Color Color::ALPHA = Color(0xff000000);
