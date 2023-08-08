@@ -206,7 +206,12 @@ Color Canvas::averageOfRegion(float x, float y, float region_width, float region
 		weights[i] /= scale_sq;
 	}
 
-	return Color::average(colors, colors_index, weights);
+	Color color_out = Color::average(colors, colors_index, weights);
+
+	delete[] colors;
+	delete[] weights;
+
+	return color_out;
 }
 
 void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float scale, int* buffer)
@@ -237,7 +242,7 @@ void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float 
 		setCursor(x0, y0 + j);
 		for (int i = 1; i < width - 1; i++)
 		{
-			drawNextPoint(averageOfRegion((i + t0 - 1) * scale, (j + s0 - 1) * scale, 1 / scale, 1 / scale, scale, buffer, image_width, image_height));
+			drawNextPoint(averageOfRegion((i + t0 - 1) * scale, (j + s0 - 1) * scale, 1.0 / scale, 1.0 / scale, scale, buffer, image_width, image_height));
 		}
 	}
 
