@@ -69,17 +69,18 @@ void textScalingTest(Canvas& canvas, MouseInfo& mouse, KeyInfo& keyboard)
 	static Button decrease(Point(0.5, 0.8), -100, 0, 50, 50, "-");
 	static Button increase(Point(0.5, 0.8), 100, 0, 50, 50, "+");
 
-	static TextBox text(300, 100, "A", 2);
+	static TextBox text(400, 400, "A", 2);
 	static TextBox scale_text(300, 200);
-	static float scale = 1;
+	static float scale = 2;
 
 	mouse.release();
 	canvas.fill(Color::WHITE);
-
-	//text.draw(canvas);
-	Point mouse_c(300, 300);
-	canvas.drawCircle(mouse_c, 10);
-	canvas.lerpDrawPoint(Point(400 + (mouse.x - mouse_c.x) / 50.0, 400 + (mouse.y - mouse_c.y) / 50.0), scale);
+	text.setScale(scale);
+	text.draw(canvas);
+	//Point mouse_c(300, 300);
+	//canvas.drawCircle(mouse_c, 10);
+	//canvas.lerpDrawPoint(Point(400 + (mouse.x - mouse_c.x) / 50.0, 400 + (mouse.y - mouse_c.y) / 50.0), scale);
+	//canvas.fillRect(Point(410 + (mouse.x - mouse_c.x) / 50.0, 400 + (mouse.y - mouse_c.y) / 50.0), scale, scale);
 	decrease.draw(canvas, mouse);
 	increase.draw(canvas, mouse);
 
