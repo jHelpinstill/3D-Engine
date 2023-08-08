@@ -90,7 +90,13 @@ void Camera::drawNormals(Canvas &canvas, Mesh* mesh)
 
 Color Camera::lightingColorFunc(int x, int y)
 {
-	return current_light->findColor(x, y, current_mesh->color);// + Color(Color::occludeFast(current_mesh->color.val, *current_ambient << 24));
+	//float a, b;
+	//a = ((2 * x / (float)) - 1) * info.FOV_value;
+	//b = (info.height / (float)info.width - 2 * y / (float)info.width) * info.FOV_value;
+	//
+	//Vec3 v(1, a, b);
+
+	return current_mesh->color;// current_light->findColor(RayCast(this, x, y).distance, *current_ambient)* current_mesh->color;// + Color(Color::occludeFast(current_mesh->color.val, *current_ambient << 24));
 }
 
 void Camera::mapToDisplay(Canvas &canvas, Triangle &tri)

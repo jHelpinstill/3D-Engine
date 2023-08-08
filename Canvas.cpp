@@ -558,9 +558,14 @@ void Canvas::fillUpperTri(int x0, int x1, int x2, int y0, int y1, Color (*colorF
 {
 //	color = 0x0000ff;
 	
-	if(y1 == y0) for(int i = x1; i < x2; i++)
+	if (y1 == y0)
 	{
-		drawPoint(i, y0, colorFunc(i, y0));
+		if (y1 < 0 || y1 >= frame->height) return;
+		if (x1 < 0) x1 = 0;
+		if (x2 > frame->width) x2 = frame->width;
+		setCursor(x1, y0);
+		for (int i = x1; i < x2; i++)
+			drawNextPoint(colorFunc(i, y0));
 		return;
 	}
 	
@@ -585,8 +590,16 @@ void Canvas::fillUpperTri(int x0, int x1, int x2, int y0, int y1, Color (*colorF
 	
 	while(y < y1)
 	{
-		for(int i = x; i <= xf; i++)
-			drawPoint(i, y, colorFunc(i, y));
+		if (y >= frame->height) break;
+		if (x >= frame->width) break;
+		if (x < 0) x = 0;
+		if (x1 >= frame->width) x1 = frame->width - 1;
+		if (y >= 0)
+		{
+			setCursor(x, y);
+			for (int i = x; i <= xf; i++)
+				drawNextPoint(colorFunc(i, y));
+		}
 			
 		accum1 += m1_mag;
 		while(accum1 > 1)
@@ -609,9 +622,14 @@ void Canvas::fillLowerTri(int x0, int x1, int x2, int y0, int y1, Color (*colorF
 {
 //	color = 0x00ff00;
 	
-	if(y1 == y0) for(int i = x1; i < x2; i++)
+	if(y1 == y0)
 	{
-		drawPoint(i, y0, colorFunc(i, y0));
+		if (y1 < 0 || y1 >= frame->height) return;
+		if (x1 < 0) x1 = 0;
+		if (x2 > frame->width) x2 = frame->width;
+		setCursor(x1, y0);
+		for (int i = x1; i < x2; i++)
+			drawNextPoint(colorFunc(i, y0));
 		return;
 	}
 	
@@ -636,8 +654,16 @@ void Canvas::fillLowerTri(int x0, int x1, int x2, int y0, int y1, Color (*colorF
 	
 	while(y < y1)
 	{	
-		for(int i = x; i <= xf; i++)
-			drawPoint(i, y, colorFunc(i, y));
+		if (y >= frame->height) break;
+		if (x >= frame->width) break;
+		if (x < 0) x = 0;
+		if (x1 >= frame->width) x1 = frame->width - 1;
+		if (y >= 0)
+		{
+			setCursor(x, y);
+			for (int i = x; i <= xf; i++)
+				drawNextPoint(colorFunc(i, y));
+		}
 		
 		accum1 += m1_mag;
 		while(accum1 > 1)
