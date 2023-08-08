@@ -127,9 +127,86 @@ void Canvas::lerpDrawPoint(Point p, float size, Color color)
 	drawNextPoint(color);
 }
 
-Color Canvas::averageOfRegion(float x0, float x1, float y0, float y1, int* buffer)
+Color Canvas::averageOfRegion(float x, float y, float size, int* buffer, int width, int height)
 {
-	 
+	int x0, x1, y0, y1;
+	x0 = (int)x;
+	x1 = (int)(x + size);
+	y0 = (int)y;
+	y1 = (int)(y + size);
+
+	float t0, t1, s0, s1;
+	t0 = 1 - (x - x0);
+	t1 = 1 - (x1 - (x + size));
+	s0 = 1 - (y - y0);
+	s1 = 1 - (y1 - (y + size));
+
+	int max_colors = ((int)size + 2) * ((int)size + 2);
+	Color* colors = new Color[max_colors];
+	float* weights = new float[max_colors];
+	int colors_index = 0;
+
+	// body
+	for (int i = x0 + 1; i < x1 - 1; i++) for (int j = y0 + 1; j < y1 - 1; j++)
+	{
+		colors[colors_index] = buffer[i + width * j];
+		weights[colors_index] = 1;
+		colors_index++;
+	}
+
+	// edges
+	for (int i = x0 + 1; i < x1 - 1; i++)
+	{
+		colors[colors_index] = buffer[i + width * y0];
+		weights[colors_index] = s0;
+		colors_index++;
+	}
+
+	for (int i = x0 + 1; i < x1 - 1; i++)
+	{
+		colors[colors_index] = buffer[i + width * y1];
+		weights[colors_index] = s1;
+		colors_index++;
+	}
+
+	for (int j = y0 + 1; j < y1 - 1; j++)
+	{
+		colors[colors_index] = buffer[x0 + width * j];
+		weights[colors_index] = t0;
+		colors_index++;
+	}
+
+	for (int j = y0 + 1; j < y1 - 1; j++)
+	{
+		colors[colors_index] = buffer[x1 + width * j];
+		weights[colors_index] = t1;
+		colors_index++;
+	}
+
+	// corners
+	colors[colors_index] = buffer[x0 + width * y0];
+	weights[colors_index] = t0 * s0;
+	colors_index++;
+
+	colors[colors_index] = buffer[x1 + width * y0];
+	weights[colors_index] = t1 * s0;
+	colors_index++;
+
+	colors[colors_index] = buffer[x0 + width * y1];
+	weights[colors_index] = t0 * s1;
+	colors_index++;
+
+	colors[colors_index] = buffer[x1 + width * y1];
+	weights[colors_index] = t1 * s1;
+	colors_index++;
+
+	float size_sq = size * size;
+	for (int i = 0; i < colors_index; i++)
+	{
+		weights[i] /= size_sq;
+	}
+
+	return Color::average(colors, colors_index, weights);
 }
 
 void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float scale, int* buffer)
