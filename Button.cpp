@@ -98,6 +98,8 @@ TextBox* Button::getTextBox()
 }
 void Button::setTextPos()
 {
+	if (text_box == nullptr)
+		text_box = new TextBox();
 	text_box->setPos(x + width / 2 - text_box->getLength() * 6 * text_box->getScale() / 2 + text_box->getScale(), y + height / 2 - 4 * text_box->getScale());
 }
 
@@ -151,4 +153,10 @@ void Button::debug_print()
 	std::cout << "size: " << width << ", " << height << std::endl;
 	std::cout << "color: " << std::hex << fill_color.val << ", " << border_color.val << std::dec << std::endl;
 	std::cout << std::endl;
+}
+
+Button::~Button()
+{
+	if (text_box != nullptr)
+		delete text_box;
 }

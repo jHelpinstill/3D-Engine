@@ -53,6 +53,8 @@ public:
 	
 	void draw(Canvas &canvas, MouseInfo &mouse);
 	void debug_print();
+
+	~Button();
 };
 
 #endif
