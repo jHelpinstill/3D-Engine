@@ -93,6 +93,7 @@ void TextBox::drawChar(Canvas& canvas, char c)
 				//for (int k = 0; k < scale; k++) for (int l = 0; l < scale; l++)
 				//	canvas.drawPoint(x + cursor_x + 4 * scale + k, y + cursor_y + (j + tail_shift) * scale + l, color);
 			}
+	//canvas.drawMatrix(x + cursor_x * scale, y + cursor_y * scale, 5, 11, buffer);
 	canvas.lerpDrawMatrix(Point(x + cursor_x * scale, y + cursor_y * scale), 5, 11, scale, buffer); 
 	cursor_x += 6;
 	delete[] buffer;
