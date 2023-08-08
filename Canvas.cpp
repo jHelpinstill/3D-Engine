@@ -127,7 +127,7 @@ void Canvas::lerpDrawPoint(Point p, float size, Color color)
 	drawNextPoint(color);
 }
 
-Color Canvas::averageOfRegion(float x, float y, float region_width, float region_height, float scale, int* buffer, int width, int height)
+Color Canvas::averageOfRegion(float x, float y, float region_width, float region_height, int* buffer, int width, int height, Color background)
 {
 	int x0, x1, y0, y1;
 	x0 = (int)x;
@@ -135,13 +135,51 @@ Color Canvas::averageOfRegion(float x, float y, float region_width, float region
 	y0 = (int)y;
 	y1 = (int)(y + region_height);
 
+	// Handle region out of bounds by averaging in background color
+	bool avg_background = false;
+	float bg_h_t, bg_h_b, bg_w_l, bg_w_r;	// background (width/height) (top/bottom/left/right)
+	bg_h_t = bg_h_b = bg_w_l = bg_w_r = 0;
+	if (x0 < 0)
+	{
+		bg_w_l = -x;
+		region_width -= bg_w_l;
+		x0 = 0;
+		avg_background = true;
+	}
+	if (x1 >= width)
+	{
+		bg_w_r = (x + region_width) - width;
+		region_width -= bg_w_r;
+		x1 = width - 1;
+		avg_background = true;
+	}
+	if (y0 < 0)
+	{
+		bg_h_t = -y;
+		region_height -= bg_h_t;
+		y0 = 0;
+		avg_background = true;
+	}
+	if (y1 >= height)
+	{
+		bg_h_b = (y + region_height) - height;
+		region_height -= bg_h_b;
+		y1 = height - 1;
+		avg_background = true;
+	}
+
 	float t0, t1, s0, s1;
 	t0 = 1 - (x - x0);
-	t1 = 1 - (x1 - (x + region_width));
+	t1 = ((x + region_width) - x1);
 	s0 = 1 - (y - y0);
-	s1 = 1 - (y1 - (y + region_height));
+	s1 = ((y + region_height) - y1);
 
-	int max_colors = ((int)region_width + 2) * ((int)region_height + 2);
+	if (x0 == x1)
+		t0 = t1 = region_width / 2;
+	if (y0 == y1)
+		s0 = s1 = region_height / 2;
+
+	int max_colors = ((int)region_width + 2) * ((int)region_height + 2); 
 	Color* colors = new Color[max_colors];
 	float* weights = new float[max_colors];
 	int colors_index = 0;
@@ -153,7 +191,7 @@ Color Canvas::averageOfRegion(float x, float y, float region_width, float region
 		weights[colors_index] = 1;
 		colors_index++;
 	}
-
+	
 	// edges
 	for (int i = x0 + 1; i < x1 - 1; i++)
 	{
@@ -161,21 +199,21 @@ Color Canvas::averageOfRegion(float x, float y, float region_width, float region
 		weights[colors_index] = s0;
 		colors_index++;
 	}
-
+	
 	for (int i = x0 + 1; i < x1 - 1; i++)
 	{
 		colors[colors_index] = buffer[i + width * y1];
 		weights[colors_index] = s1;
 		colors_index++;
 	}
-
+	
 	for (int j = y0 + 1; j < y1 - 1; j++)
 	{
 		colors[colors_index] = buffer[x0 + width * j];
 		weights[colors_index] = t0;
 		colors_index++;
 	}
-
+	
 	for (int j = y0 + 1; j < y1 - 1; j++)
 	{
 		colors[colors_index] = buffer[x1 + width * j];
@@ -200,13 +238,31 @@ Color Canvas::averageOfRegion(float x, float y, float region_width, float region
 	weights[colors_index] = t1 * s1;
 	colors_index++;
 
-	float scale_sq = scale * scale;
+	float area = region_width * region_height;
 	for (int i = 0; i < colors_index; i++)
 	{
-		weights[i] /= scale_sq;
+		weights[i] /= area;
 	}
 
+
 	Color color_out = Color::average(colors, colors_index, weights);
+
+	// Average in background
+	if (avg_background)
+	{
+		float bg_area =
+			(region_width + bg_w_l + bg_w_r) * (bg_h_t + bg_h_b) +
+			(region_height + bg_h_t + bg_h_b) * (bg_w_l + bg_w_r) -
+			(bg_h_t * bg_w_l + bg_w_r * bg_h_t + bg_h_b * bg_w_r + bg_w_l * bg_h_b);
+		float region_area = region_width * region_height;
+		float total_area = region_area + bg_area;
+
+		Color bg_color_avg[2]; float bg_color_weights[2];
+		bg_color_avg[0] = color_out; bg_color_avg[1] = background;
+		bg_color_weights[0] = region_area / total_area;
+		bg_color_weights[1] = bg_area / total_area;
+		color_out = Color::average(bg_color_avg, 2, bg_color_weights);
+	}
 
 	delete[] colors;
 	delete[] weights;
@@ -247,12 +303,12 @@ void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float 
 	s0 = pos.y - y0;
 	s1 = y1 - (pos.y + image_height);
 
-	for (int j = 1; j < height - 1; j++)
+	for (int j = 0; j < height; j++)
 	{
 		setCursor(x0, y0 + j);
-		for (int i = 1; i < width - 1; i++)
+		for (int i = 0; i < width; i++)
 		{
-			drawNextPoint(averageOfRegion((i + t0 - 1) / scale, (j + s0 - 1) / scale, 1.0 / scale, 1.0 / scale, scale, buffer, image_width, image_height));
+			drawNextPoint(averageOfRegion((i - t0) / scale, (j - s0) / scale, 1.0 / scale, 1.0 / scale, buffer, image_width, image_height));
 			drawCircle(500 + 10 * i, 10 + 10 * j, 5);
 		}
 	}
