@@ -33,6 +33,12 @@ void TextBox::setPos(int x, int y)
 	this->y = y;
 }
 
+void TextBox::setPos(Point p)
+{
+	this->x = p.x;
+	this->y = p.y;
+}
+
 void TextBox::setColor(Color color)
 {
 	this->color = color;

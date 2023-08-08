@@ -16,8 +16,8 @@ struct LetterBits
 class TextBox
 {
 private:
-	int x = 0;
-	int y = 0;
+	float x = 0;
+	float y = 0;
 	int width = -1;
 	float scale = 2;
 	std::string text;
@@ -37,6 +37,7 @@ public:
 	TextBox(int x, int y, std::string text, float scale, Color color);
 	
 	void setPos(int x, int y);
+	void setPos(Point p);
 	void setScale(float scale);
 	void setColor(Color color);
 	
