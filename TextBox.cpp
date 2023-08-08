@@ -104,8 +104,6 @@ void TextBox::draw(Canvas &canvas)
 	for(int c = 0; c < length; c++)
 	{
 		drawChar(canvas, text[c]);
-//		std::cout << "	drawing '" << text[c] << "'" << std::endl;
-		
 	}
 	cursor_x = 0;
 	cursor_y = 0;
