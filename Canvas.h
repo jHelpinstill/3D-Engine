@@ -29,7 +29,7 @@ private:
 
 	void drawNextPoint(Color color);
 	void setCursor(int x, int y);
-	Color averageOfRegion(float x, float y, float size, int* buffer, int width, int height);
+	Color averageOfRegion(float x, float y, float region_width, float region_height, float scale, int* buffer, int width, int height);
 	
 	static Color defaultColorFunc(int x, int y);
 	static Color default_color;

@@ -127,21 +127,21 @@ void Canvas::lerpDrawPoint(Point p, float size, Color color)
 	drawNextPoint(color);
 }
 
-Color Canvas::averageOfRegion(float x, float y, float size, int* buffer, int width, int height)
+Color Canvas::averageOfRegion(float x, float y, float region_width, float region_height, float scale, int* buffer, int width, int height)
 {
 	int x0, x1, y0, y1;
 	x0 = (int)x;
-	x1 = (int)(x + size);
+	x1 = (int)(x + region_width);
 	y0 = (int)y;
-	y1 = (int)(y + size);
+	y1 = (int)(y + region_height);
 
 	float t0, t1, s0, s1;
 	t0 = 1 - (x - x0);
-	t1 = 1 - (x1 - (x + size));
+	t1 = 1 - (x1 - (x + region_width));
 	s0 = 1 - (y - y0);
-	s1 = 1 - (y1 - (y + size));
+	s1 = 1 - (y1 - (y + region_height));
 
-	int max_colors = ((int)size + 2) * ((int)size + 2);
+	int max_colors = ((int)region_width + 2) * ((int)region_height + 2);
 	Color* colors = new Color[max_colors];
 	float* weights = new float[max_colors];
 	int colors_index = 0;
@@ -200,10 +200,10 @@ Color Canvas::averageOfRegion(float x, float y, float size, int* buffer, int wid
 	weights[colors_index] = t1 * s1;
 	colors_index++;
 
-	float size_sq = size * size;
+	float scale_sq = scale * scale;
 	for (int i = 0; i < colors_index; i++)
 	{
-		weights[i] /= size_sq;
+		weights[i] /= scale_sq;
 	}
 
 	return Color::average(colors, colors_index, weights);
@@ -214,14 +214,11 @@ void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float 
 	int width = (int)(image_width * scale + 1);
 	int height = (int)(image_height * scale + 1);
 
-	float s_width = image_width * scale / 2;
-	float s_height = image_height * scale / 2;
-
 	int x0, y0, x1, y1;
-	x0 = (int)(pos.x - s_width);
+	x0 = (int)(pos.x);
 	x1 = x0 + width;
 
-	y0 = (int)(pos.y - s_height);
+	y0 = (int)(pos.y);
 	y1 = y0 + height;
 
 	if (x0 < 0) return;
@@ -229,63 +226,78 @@ void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float 
 	if (y0 < 0) return;
 	if (y1 > frame->height) return;
 
+	float t0, t1, s0, s1;
+	t0 = pos.x - x0;
+	t1 = x1 - (pos.x + image_width);
+	s0 = pos.y - y0;
+	s1 = y1 - (pos.y + image_height);
+
+	for (int j = 1; j < height - 1; j++)
+	{
+		setCursor(x0, y0 + j);
+		for (int i = 1; i < width - 1; i++)
+		{
+			drawNextPoint(averageOfRegion((i + t0 - 1) * scale, (j + s0 - 1) * scale, 1 / scale, 1 / scale, scale, buffer, image_width, image_height));
+		}
+	}
+
 	//float t0, t1, s0, s1;
 	//t0 = 1 - ((pos.x - w_radius) - x0);
 	//t1 = 1 - (x1 - (pos.x + w_radius));
 	//s0 = 1 - ((pos.y - h_radius) - y0);
 	//s1 = 1 - (y1 - (pos.y + h_radius));
 	
-	if (scale < 1)
-	{
-		float t0, t1, s0, s1;
-		t0 = pos.x - x0;
-		s0 = pos.y - y0;
-
-		int whole_pixels = (int)(1 / scale);
-
-		int max_colors = whole_pixels + 2;
-		max_colors *= max_colors;
-
-		Color* colors = new Color[max_colors];
-		float* areas = new float[max_colors];
-		
-		int rows = 0;
-		int cols = 0;
-
-		float row_sum = 0;
-		float col_sum = 0;
-
-		for (int j = 0; j < height; j++)	// repeat for each row
-		{
-			int p = x0 + ((frame->height - 1) - (y0 + j)) * frame->width;
-			int rows = 0;	// rows of scaled image per screen pixel
-			row_sum = s0;
-			while (row_sum < 1)
-			{
-				rows++;
-				row_sum += scale;
-			}
-
-			int y0 = (int)(row_sum / scale) - rows;
-
-			for (int i = 1; i < height - 1; i++) // repeat for each column
-			{
-				col_sum = t0;
-				int columns = 0;
-				while (col_sum < 1)
-				{
-					cols++;
-					col_sum += scale;
-				}
-
-				int x0 = (int)(col_sum / scale) - cols; 
-				for (int x = x0 + 1; x < cols - 1; x++) for (int y = y0 + 1; y < rows - 1; y++)
-				{
-
-				}
-			}
-		}
-	}
+	//if (scale < 1)
+	//{
+	//	float t0, t1, s0, s1;
+	//	t0 = pos.x - x0;
+	//	s0 = pos.y - y0;
+	//
+	//	int whole_pixels = (int)(1 / scale);
+	//
+	//	int max_colors = whole_pixels + 2;
+	//	max_colors *= max_colors;
+	//
+	//	Color* colors = new Color[max_colors];
+	//	float* areas = new float[max_colors];
+	//	
+	//	int rows = 0;
+	//	int cols = 0;
+	//
+	//	float row_sum = 0;
+	//	float col_sum = 0;
+	//
+	//	for (int j = 0; j < height; j++)	// repeat for each row
+	//	{
+	//		int p = x0 + ((frame->height - 1) - (y0 + j)) * frame->width;
+	//		int rows = 0;	// rows of scaled image per screen pixel
+	//		row_sum = s0;
+	//		while (row_sum < 1)
+	//		{
+	//			rows++;
+	//			row_sum += scale;
+	//		}
+	//
+	//		int y0 = (int)(row_sum / scale) - rows;
+	//
+	//		for (int i = 1; i < height - 1; i++) // repeat for each column
+	//		{
+	//			col_sum = t0;
+	//			int columns = 0;
+	//			while (col_sum < 1)
+	//			{
+	//				cols++;
+	//				col_sum += scale;
+	//			}
+	//
+	//			int x0 = (int)(col_sum / scale) - cols; 
+	//			for (int x = x0 + 1; x < cols - 1; x++) for (int y = y0 + 1; y < rows - 1; y++)
+	//			{
+	//
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 void Canvas::drawLine(int x0, int y0, int x1, int y1, Color color)
