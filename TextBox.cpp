@@ -42,10 +42,7 @@ void TextBox::drawChar(Canvas& canvas, char c)
 {
 	int tail_shift = 0;
 	int width_reduce = 0;
-	int buffer[55];
-	for (int i = 0; i < 55; i++)
-		buffer[i] = Color::ALPHA.val;
-
+	
 	switch (c)
 	{
 	case 'g':
@@ -69,6 +66,12 @@ void TextBox::drawChar(Canvas& canvas, char c)
 	default:
 		break;
 	}
+
+	int* buffer = new int[55];
+	for (int i = 0; i < 55; i++)
+		buffer[i] = Color::ALPHA.val;
+
+
 	for (int i = width_reduce; i < 4; i++) for (int j = 0; j < 8; j++)
 		if ((letters[c].bytes[0] << j + i * 8) & 0x80000000)
 		{
@@ -92,6 +95,7 @@ void TextBox::drawChar(Canvas& canvas, char c)
 			}
 	canvas.lerpDrawMatrix(Point(x + cursor_x * scale, y + cursor_y * scale), 5, 11, scale, buffer); 
 	cursor_x += 6;
+	delete[] buffer;
 }
 
 void TextBox::draw(Canvas &canvas)
