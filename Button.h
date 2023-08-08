@@ -9,12 +9,12 @@
 class Button
 {
 private:
-	int x, y;
-	int width;
-	int height;
+	int x{}, y{};
+	int width{};
+	int height{};
 
 	Point relative_pos;
-	int offset_x, offset_y;
+	int offset_x{}, offset_y{};
 	bool pos_is_relative = false;
 	
 	Color fill_color = Color(0xd0d0d0);
