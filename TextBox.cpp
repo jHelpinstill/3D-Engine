@@ -42,6 +42,10 @@ void TextBox::drawChar(Canvas& canvas, char c)
 {
 	int tail_shift = 0;
 	int width_reduce = 0;
+	int buffer[55];
+	for (int i = 0; i < 55; i++)
+		buffer[i] = Color::ALPHA.val;
+
 	switch (c)
 	{
 	case 'g':
@@ -68,7 +72,10 @@ void TextBox::drawChar(Canvas& canvas, char c)
 	for (int i = width_reduce; i < 4; i++) for (int j = 0; j < 8; j++)
 		if ((letters[c].bytes[0] << j + i * 8) & 0x80000000)
 		{
-			canvas.lerpDrawPoint(Point(x + (cursor_x + i) * scale, y + (cursor_y + j + tail_shift) * scale), scale, color);
+			buffer[i + 5 * (j + tail_shift)] = color.val;
+
+			//canvas.lerpDrawPoint(Point(x + (cursor_x + i) * scale, y + (cursor_y + j + tail_shift) * scale), scale, color);
+
 			//for (int k = 0; k < scale; k++) for (int l = 0; l < scale; l++)
 			//	canvas.drawPoint(x + cursor_x + i * scale + k, y + cursor_y + (j + tail_shift) * scale + l, color);
 		}
@@ -76,10 +83,14 @@ void TextBox::drawChar(Canvas& canvas, char c)
 		for (int j = 0; j < 8; j++)
 			if ((letters[c].bytes[1] << j) & 0x80000000)
 			{
-				canvas.lerpDrawPoint(Point(x + (cursor_x + 4) * scale, y + (cursor_y + j) * scale), scale, color);
+				buffer[4 + 5 * (j + tail_shift)] = color.val;
+
+				//canvas.lerpDrawPoint(Point(x + (cursor_x + 4) * scale, y + (cursor_y + j) * scale), scale, color);
+				
 				//for (int k = 0; k < scale; k++) for (int l = 0; l < scale; l++)
 				//	canvas.drawPoint(x + cursor_x + 4 * scale + k, y + cursor_y + (j + tail_shift) * scale + l, color);
 			}
+	canvas.lerpDrawMatrix(Point(x + cursor_x * scale, y + cursor_y * scale), 5, 11, scale, buffer); 
 	cursor_x += 6;
 }
 
