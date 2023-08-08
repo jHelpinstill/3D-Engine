@@ -127,6 +127,90 @@ void Canvas::lerpDrawPoint(Point p, float size, Color color)
 	drawNextPoint(color);
 }
 
+Color Canvas::averageOfRegion(float x0, float x1, float y0, float y1, int* buffer)
+{
+	 
+}
+
+void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float scale, int* buffer)
+{
+	int width = (int)(image_width * scale + 1);
+	int height = (int)(image_height * scale + 1);
+
+	float s_width = image_width * scale / 2;
+	float s_height = image_height * scale / 2;
+
+	int x0, y0, x1, y1;
+	x0 = (int)(pos.x - s_width);
+	x1 = x0 + width;
+
+	y0 = (int)(pos.y - s_height);
+	y1 = y0 + height;
+
+	if (x0 < 0) return;
+	if (x1 > frame->width) return;
+	if (y0 < 0) return;
+	if (y1 > frame->height) return;
+
+	//float t0, t1, s0, s1;
+	//t0 = 1 - ((pos.x - w_radius) - x0);
+	//t1 = 1 - (x1 - (pos.x + w_radius));
+	//s0 = 1 - ((pos.y - h_radius) - y0);
+	//s1 = 1 - (y1 - (pos.y + h_radius));
+	
+	if (scale < 1)
+	{
+		float t0, t1, s0, s1;
+		t0 = pos.x - x0;
+		s0 = pos.y - y0;
+
+		int whole_pixels = (int)(1 / scale);
+
+		int max_colors = whole_pixels + 2;
+		max_colors *= max_colors;
+
+		Color* colors = new Color[max_colors];
+		float* areas = new float[max_colors];
+		
+		int rows = 0;
+		int cols = 0;
+
+		float row_sum = 0;
+		float col_sum = 0;
+
+		for (int j = 0; j < height; j++)	// repeat for each row
+		{
+			int p = x0 + ((frame->height - 1) - (y0 + j)) * frame->width;
+			int rows = 0;	// rows of scaled image per screen pixel
+			row_sum = s0;
+			while (row_sum < 1)
+			{
+				rows++;
+				row_sum += scale;
+			}
+
+			int y0 = (int)(row_sum / scale) - rows;
+
+			for (int i = 1; i < height - 1; i++) // repeat for each column
+			{
+				col_sum = t0;
+				int columns = 0;
+				while (col_sum < 1)
+				{
+					cols++;
+					col_sum += scale;
+				}
+
+				int x0 = (int)(col_sum / scale) - cols; 
+				for (int x = x0 + 1; x < cols - 1; x++) for (int y = y0 + 1; y < rows - 1; y++)
+				{
+
+				}
+			}
+		}
+	}
+}
+
 void Canvas::drawLine(int x0, int y0, int x1, int y1, Color color)
 {
 	float rise = (y1 - y0);

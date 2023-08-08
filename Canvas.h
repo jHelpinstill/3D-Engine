@@ -29,6 +29,7 @@ private:
 
 	void drawNextPoint(Color color);
 	void setCursor(int x, int y);
+	Color averageOfRegion(float x0, float x1, float y0, float y1, int* buffer);
 	
 	static Color defaultColorFunc(int x, int y);
 	static Color default_color;
@@ -40,6 +41,8 @@ public:
 	int getWidth();
 	int getHeight();
 	void getFrameRegion(int x, int y, int width, int height, int* buffer);
+
+	void lerpDrawMatrix(Point pos, int image_width, int image_height, float scale, int* buffer);
 	
 	void drawPoint(int x, int y, Color color = Color(0));
 	void drawLine(int x0, int y0, int x1, int y1, Color color = Color(0));
