@@ -90,7 +90,10 @@ void Button::setText(std::string text)
 }
 void Button::setTextBox(TextBox* text_box)
 {
+	if (this->text_box != nullptr)
+		delete this->text_box;
 	this->text_box = text_box;
+	setTextPos();
 }
 TextBox* Button::getTextBox()
 {
