@@ -139,6 +139,9 @@ Color Canvas::averageOfRegion(float x, float y, float region_width, float region
 	bool avg_background = false;
 	float bg_h_t, bg_h_b, bg_w_l, bg_w_r;	// background (width/height) (top/bottom/left/right)
 	bg_h_t = bg_h_b = bg_w_l = bg_w_r = 0;
+
+	if (x >= width) return background;
+	if (y >= width) return background;
 	if (x < 0)
 	{
 		bg_w_l = -x;
