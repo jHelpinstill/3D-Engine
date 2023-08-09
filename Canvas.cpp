@@ -139,7 +139,7 @@ Color Canvas::averageOfRegion(float x, float y, float region_width, float region
 	bool avg_background = false;
 	float bg_h_t, bg_h_b, bg_w_l, bg_w_r;	// background (width/height) (top/bottom/left/right)
 	bg_h_t = bg_h_b = bg_w_l = bg_w_r = 0;
-	if (x0 < 0)
+	if (x < 0)
 	{
 		bg_w_l = -x;
 		region_width -= bg_w_l;
@@ -153,7 +153,7 @@ Color Canvas::averageOfRegion(float x, float y, float region_width, float region
 		x1 = width - 1;
 		avg_background = true;
 	}
-	if (y0 < 0)
+	if (y < 0)
 	{
 		bg_h_t = -y;
 		region_height -= bg_h_t;
@@ -247,7 +247,7 @@ Color Canvas::averageOfRegion(float x, float y, float region_width, float region
 
 	Color color_out = Color::average(colors, colors_index, weights);
 
-	// Average in background
+	// Mix in background pixel 
 	if (avg_background)
 	{
 		float bg_area =
