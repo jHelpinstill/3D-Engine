@@ -36,9 +36,10 @@ public:
 	void setB(int b);
 	bool hasAlpha();
 	
-	static Color R;
-	static Color G;
-	static Color B;
+	static Color R; static Color RED;
+	static Color G; static Color GREEN;
+	static Color B; static Color BLUE;
+	static Color Y; static Color YELLOW;
 	static Color BLACK;
 	static Color WHITE;
 	static Color ALPHA;

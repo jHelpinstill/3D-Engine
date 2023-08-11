@@ -228,6 +228,13 @@ int Color::getB()
 Color Color::R = Color(0x00ff0000);
 Color Color::G = Color(0x0000ff00);
 Color Color::B = Color(0x000000ff);
+Color Color::Y = Color(0x00ffff00);
+
+Color Color::RED = Color(0x00ff0000);
+Color Color::GREEN = Color(0x0000ff00);
+Color Color::BLUE = Color(0x000000ff);
+Color Color::YELLOW = Color(0x00ffff00);
+
 Color Color::BLACK = Color(0x00000000);
 Color Color::WHITE = Color(0x00ffffff);
 Color Color::ALPHA = Color(0xff000000);
