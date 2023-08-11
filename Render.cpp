@@ -69,16 +69,43 @@ void textScalingTest(Canvas& canvas, MouseInfo& mouse, KeyInfo& keyboard)
 	static Button decrease(Point(0.5, 0.8), -100, 0, 50, 50, "-");
 	static Button increase(Point(0.5, 0.8), 100, 0, 50, 50, "+");
 
-	static TextBox text(395, 390, "A", 2);
+	static TextBox text(395, 390, "Test ABC abc", 2);
 	static TextBox scale_text(300, 200);
 	static float scale = 2;
+
+	static Color square[16] =
+	{
+		0x0, 0x0, 0x0, 0x0,
+		0x0, 0xff000000, 0xff000000, 0x0,
+		0x0, 0xff000000, 0xff000000, 0x0,
+		0x0, 0x0, 0x0, 0x0
+	};
+	static Color smiley[144] =
+	{
+		Color::ALPHA, Color::ALPHA, Color::ALPHA, Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK, Color::ALPHA, Color::ALPHA, Color::ALPHA,
+		Color::ALPHA, Color::ALPHA, Color::BLACK, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::BLACK, Color::ALPHA, Color::ALPHA,
+		Color::ALPHA, Color::BLACK, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::BLACK, Color::ALPHA,
+		Color(0x00ff0000), Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK,
+		Color(0x0000ff00), Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK, Color::YELLOW, Color::YELLOW,  Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK,
+		Color(0x000000ff), Color::YELLOW, Color::BLACK, Color::BLACK, Color::BLACK, Color::YELLOW, Color::YELLOW, Color::BLACK, Color::BLACK, Color::BLACK, Color::YELLOW, Color::BLACK,
+		Color(0x00ffff00), Color::YELLOW,  Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::BLACK,
+		Color(0x0000ffff), Color::YELLOW,  Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::BLACK, Color::YELLOW, Color::YELLOW, Color::BLACK,
+		Color(0x00ff00ff), Color::YELLOW,  Color::YELLOW, Color::YELLOW, Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::BLACK,
+		Color::ALPHA, Color::BLACK, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::BLACK, Color::ALPHA,
+		Color::ALPHA, Color::ALPHA, Color::BLACK, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::YELLOW, Color::BLACK, Color::ALPHA, Color::ALPHA,
+		Color::ALPHA, Color::ALPHA, Color::ALPHA, Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK, Color::BLACK, Color::ALPHA, Color::ALPHA, Color::ALPHA,
+	};
 
 	mouse.release();
 	canvas.fill(Color::WHITE);
 	text.setScale(scale);
+	Point mouse_c(300, 300);
+	canvas.drawCircle(mouse_c, 10);
+	text.setPos(Point(400 + (mouse.x - mouse_c.x) / 20.0, 400 + (mouse.y - mouse_c.y) / 20.0));
+	//canvas.lerpDrawMatrix(Point(380 + (mouse.x - mouse_c.x) / 20.0, 400 + (mouse.y - mouse_c.y) / 20.0), 4, 4, scale, square);
+	canvas.lerpDrawMatrix(Point(380 + (mouse.x - mouse_c.x) / 20.0, 400 + (mouse.y - mouse_c.y) / 20.0), 12, 12, scale, smiley);
 	text.draw(canvas);
-	//Point mouse_c(300, 300);
-	//canvas.drawCircle(mouse_c, 10);
+	
 	//canvas.lerpDrawPoint(Point(400 + (mouse.x - mouse_c.x) / 50.0, 400 + (mouse.y - mouse_c.y) / 50.0), scale);
 	//canvas.fillRect(Point(410 + (mouse.x - mouse_c.x) / 50.0, 400 + (mouse.y - mouse_c.y) / 50.0), scale, scale);
 	decrease.draw(canvas, mouse);
@@ -110,13 +137,13 @@ void render(Frame &frame, Camera &camera, MouseInfo &mouse, KeyInfo &keyboard, s
 
 	///// PLACE RENDER CODE HERE (PAINT TO CANVAS) /////
 
-	camera.drawHorizon(canvas, Color(0x50ff50), Color(0x8080ff));
-	camera.draw(canvas, mesh_list[0], &light);
-	
-	doButtons(canvas, player, mouse, frame.dt);
-	doText(canvas, frame.dt);
+	//camera.drawHorizon(canvas, Color(0x50ff50), Color(0x8080ff));
+	//camera.draw(canvas, mesh_list[0], &light);
+	//
+	//doButtons(canvas, player, mouse, frame.dt);
+	//doText(canvas, frame.dt);
 
-	//textScalingTest(canvas, mouse, keyboard);
+	textScalingTest(canvas, mouse, keyboard);
 
 	if(keyboard.keyPressed(27))
 		mouse.release();
