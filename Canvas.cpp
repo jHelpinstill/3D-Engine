@@ -384,12 +384,12 @@ void Canvas::drawRect(int x, int y, int width, int height, Color color)
 	for(int i = 0; i < width; i++)
 	{
 		drawPoint(x + i, y, color);
-		drawPoint(x + i, y + height, color);
+		drawPoint(x + i, y + height - 1, color);
 	}
-	for(int i = 0; i < height; i++)
+	for(int i = 1; i < height - 1; i++)
 	{
 		drawPoint(x, y + i, color);
-		drawPoint(x + width, y + i, color);
+		drawPoint(x + width - 1, y + i, color);
 	}
 }
 
