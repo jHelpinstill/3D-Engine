@@ -127,7 +127,7 @@ void Canvas::lerpDrawPoint(Point p, float size, Color color)
 	drawNextPoint(color);
 }
 
-Color Canvas::averageOfRegion(float x, float y, float region_width, float region_height, int* buffer, int width, int height, Color background)
+Color Canvas::averageOfRegion(float x, float y, float region_width, float region_height, Color* buffer, int width, int height, Color background)
 {
 	int x0, x1, y0, y1;
 	x0 = (int)x;
@@ -275,10 +275,10 @@ void Canvas::drawMatrix(int x, int y, int image_width, int image_height, int* bu
 	}
 }
 
-void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float scale, int* buffer)
+void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float scale, Color* buffer)
 {
-	int width = (int)(image_width * scale) + 1;
-	int height = (int)(image_height * scale) + 1;
+	int width = (int)(image_width * scale) + 2;
+	int height = (int)(image_height * scale) + 2;
 
 	int x0, y0, x1, y1;
 	x0 = (int)(pos.x);
@@ -306,8 +306,7 @@ void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float 
 			drawNextPoint(averageOfRegion((i - t0) / scale, (j - s0) / scale, 1.0 / scale, 1.0 / scale, buffer, image_width, image_height));
 		}
 	}
-	drawRect(x0, y0, width, height);
-	drawRect(390, 390, 5, 5);
+	//drawRect(x0 - 1, y0 - 1, width + 2, height + 2);
 }
 
 void Canvas::drawLine(int x0, int y0, int x1, int y1, Color color)
