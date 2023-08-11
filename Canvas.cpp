@@ -136,39 +136,36 @@ Color Canvas::averageOfRegion(float x, float y, float region_width, float region
 	y1 = (int)(y + region_height);
 
 	// Handle region out of bounds by averaging in background color
-	bool avg_background = false;
-	float bg_h_t, bg_h_b, bg_w_l, bg_w_r;	// background (width/height) (top/bottom/left/right)
-	bg_h_t = bg_h_b = bg_w_l = bg_w_r = 0;
+	
+	//bool avg_background = false;
+	//float bg_h_t, bg_h_b, bg_w_l, bg_w_r;	// background (width/height) (top/bottom/left/right)
+	//bg_h_t = bg_h_b = bg_w_l = bg_w_r = 0;
 
 	if (x >= width) return background;
-	if (y >= width) return background;
+	if (y >= height) return background;
+	if (x1 < 0) return background;
+	if (y1 < 0) return background;
+
+	float total_area = region_width * region_height;
 	if (x < 0)
 	{
-		bg_w_l = -x;
-		region_width -= bg_w_l;
+		region_width += x;
 		x0 = 0;
-		avg_background = true;
 	}
 	if (x1 >= width)
 	{
-		bg_w_r = (x + region_width) - width;
-		region_width -= bg_w_r;
+		region_width = width - x;
 		x1 = width - 1;
-		avg_background = true;
 	}
 	if (y < 0)
 	{
-		bg_h_t = -y;
-		region_height -= bg_h_t;
+		region_height += y;
 		y0 = 0;
-		avg_background = true;
 	}
 	if (y1 >= height)
 	{
-		bg_h_b = (y + region_height) - height;
-		region_height -= bg_h_b;
+		region_height = height - y;
 		y1 = height - 1;
-		avg_background = true;
 	}
 
 	float t0, t1, s0, s1;
@@ -241,24 +238,19 @@ Color Canvas::averageOfRegion(float x, float y, float region_width, float region
 	weights[colors_index] = t1 * s1;
 	colors_index++;
 
-	float area = region_width * region_height;
+	float region_area = region_width * region_height;
 	for (int i = 0; i < colors_index; i++)
 	{
-		weights[i] /= area;
+		weights[i] /= region_area;
 	}
 
 
 	Color color_out = Color::average(colors, colors_index, weights);
 
 	// Mix in background pixel 
-	if (avg_background)
+	if (total_area - region_area > 0)
 	{
-		float bg_area =
-			(region_width + bg_w_l + bg_w_r) * (bg_h_t + bg_h_b) +
-			(region_height + bg_h_t + bg_h_b) * (bg_w_l + bg_w_r) -
-			(bg_h_t * bg_w_l + bg_w_r * bg_h_t + bg_h_b * bg_w_r + bg_w_l * bg_h_b);
-		float region_area = region_width * region_height;
-		float total_area = region_area + bg_area;
+		float bg_area = total_area - region_area;
 
 		Color bg_color_avg[2]; float bg_color_weights[2];
 		bg_color_avg[0] = color_out; bg_color_avg[1] = background;
@@ -285,8 +277,8 @@ void Canvas::drawMatrix(int x, int y, int image_width, int image_height, int* bu
 
 void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float scale, int* buffer)
 {
-	int width = (int)(image_width * scale + 1);
-	int height = (int)(image_height * scale + 1);
+	int width = (int)(image_width * scale) + 1;
+	int height = (int)(image_height * scale) + 1;
 
 	int x0, y0, x1, y1;
 	x0 = (int)(pos.x);
@@ -302,9 +294,9 @@ void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float 
 
 	float t0, t1, s0, s1;
 	t0 = pos.x - x0;
-	t1 = x1 - (pos.x + image_width);
+	t1 = x1 - (pos.x + image_width * scale);
 	s0 = pos.y - y0;
-	s1 = y1 - (pos.y + image_height);
+	s1 = y1 - (pos.y + image_height * scale);
 
 	for (int j = 0; j < height; j++)
 	{
@@ -314,6 +306,8 @@ void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float 
 			drawNextPoint(averageOfRegion((i - t0) / scale, (j - s0) / scale, 1.0 / scale, 1.0 / scale, buffer, image_width, image_height));
 		}
 	}
+	drawRect(x0, y0, width, height);
+	drawRect(390, 390, 5, 5);
 }
 
 void Canvas::drawLine(int x0, int y0, int x1, int y1, Color color)
