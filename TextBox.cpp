@@ -73,15 +73,15 @@ void TextBox::drawChar(Canvas& canvas, char c)
 		break;
 	}
 
-	int* buffer = new int[55];
+	Color* buffer = new Color[55];
 	for (int i = 0; i < 55; i++)
-		buffer[i] = Color::ALPHA.val;
+		buffer[i] = Color::ALPHA;
 
 
 	for (int i = width_reduce; i < 4; i++) for (int j = 0; j < 8; j++)
 		if ((letters[c].bytes[0] << j + i * 8) & 0x80000000)
 		{
-			buffer[i + 5 * (j + tail_shift)] = color.val;
+			buffer[i + 5 * (j + tail_shift)] = color;
 
 			//canvas.lerpDrawPoint(Point(x + (cursor_x + i) * scale, y + (cursor_y + j + tail_shift) * scale), scale, color);
 
@@ -92,7 +92,7 @@ void TextBox::drawChar(Canvas& canvas, char c)
 		for (int j = 0; j < 8; j++)
 			if ((letters[c].bytes[1] << j) & 0x80000000)
 			{
-				buffer[4 + 5 * (j + tail_shift)] = color.val;
+				buffer[4 + 5 * (j + tail_shift)] = color;
 
 				//canvas.lerpDrawPoint(Point(x + (cursor_x + 4) * scale, y + (cursor_y + j) * scale), scale, color);
 				
