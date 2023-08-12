@@ -1,5 +1,6 @@
 #include "Color.h"
 #include <cmath>
+#include <ctype.h>
 
 Color::Color(int color)
 {
@@ -120,10 +121,61 @@ Color Color::average(Color* colors, int num_colors, float* weights)
 	return avg;
 }
 
-Color* Color::createImage(int width, int height, std::string format)
+void Color::expandNextColor(Color* img_buffer, int& buffer_index, std::string f, Color c)
+{
+	std::stringstream ss(f);
+	if (isdigit(ss.peek()))
+	{
+		int num_reps;
+		ss >> num_reps;
+		for (int i = 0; i < num_reps; i++)
+			img_buffer[buffer_index++] = c;
+	}
+	else
+		img_buffer[buffer_index++] = c;
+}
+
+Color* Color::createTexture(int width, int height, std::string format)
 // format style: color abrv (A,R,G,B,Y,K,W) followed by int num repetitions (single char implies one rep). Specified color (C) followed by argb values in hex e.g.(C00FF0800).
 {
 	Color* img_buffer = new Color[width * height];
+	int buffer_index = 0;
+	int size = format.size();
+	for (int i = 0; i < size; size++)
+	{
+		switch (format[i])
+		{
+		case 'A':
+			expandNextColor(img_buffer, buffer_index, format.substr(i), Color::ALPHA);
+			break;
+		case 'R':
+			expandNextColor(img_buffer, buffer_index, format.substr(i), Color::RED);
+			break;
+		case 'G':
+			expandNextColor(img_buffer, buffer_index, format.substr(i), Color::GREEN);
+			break;
+		case 'B':
+			expandNextColor(img_buffer, buffer_index, format.substr(i), Color::BLUE);
+			break;
+		case 'Y':
+			expandNextColor(img_buffer, buffer_index, format.substr(i), Color::YELLOW);
+			break;
+		case 'K':
+			expandNextColor(img_buffer, buffer_index, format.substr(i), Color::BLACK);
+			break;
+		case 'W':
+			expandNextColor(img_buffer, buffer_index, format.substr(i), Color::WHITE);
+			break;
+		case 'C':
+		{
+			std::stringstream get_hex(format.substr(i));
+			Color custom_color;
+			get_hex >> std::hex >> custom_color.val;
+			expandNextColor(img_buffer, buffer_index, format.substr(i), custom_color);
+			break;
+		}
+		}
+	}
 
 }
 

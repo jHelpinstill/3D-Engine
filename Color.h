@@ -9,7 +9,13 @@
 
 class Color
 {
+private:
+	static void expandNextColor(Color* img_buffer, int& buffer_index, std::string f, Color c);
+
 public:
+	int val;
+
+
 	Color(){}
 	Color(int color);
 	
@@ -28,9 +34,7 @@ public:
 	Color occlude(Color color);
 
 	static Color average(Color* colors, int num_colors, float* weights = nullptr);
-	static Color* createImage(int width, int height, std::string format);
-	
-	int val;
+	static Color* createTexture(int width, int height, std::string format);
 	
 	int getAlpha();
 	int getR();
