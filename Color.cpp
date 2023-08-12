@@ -120,6 +120,13 @@ Color Color::average(Color* colors, int num_colors, float* weights)
 	return avg;
 }
 
+Color* Color::createImage(int width, int height, std::string format)
+// format style: color abrv (A,R,G,B,Y,K,W) followed by int num repetitions (single char implies one rep). Specified color (C) followed by argb values in hex e.g.(C00FF0800).
+{
+	Color* img_buffer = new Color[width * height];
+
+}
+
 int Color::occludeFast(int color1, int color2)
 {
 //	return this->val;

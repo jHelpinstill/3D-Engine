@@ -1,6 +1,12 @@
 #ifndef COLOR_
 #define COLOR_
 
+#include <string>
+#include <string.h>
+#include <stdio.h>
+#include <sstream>
+
+
 class Color
 {
 public:
@@ -22,6 +28,7 @@ public:
 	Color occlude(Color color);
 
 	static Color average(Color* colors, int num_colors, float* weights = nullptr);
+	static Color* createImage(int width, int height, std::string format);
 	
 	int val;
 	
