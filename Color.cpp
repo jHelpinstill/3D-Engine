@@ -116,7 +116,7 @@ Color Color::average(Color* colors, int num_colors, float* weights)
 	avg.setAlpha(sqrt(sq_sum_a));
 	avg.setR(sqrt(sq_sum_r));
 	avg.setG(sqrt(sq_sum_g));
-	avg.setB(sqrt(sq_sum_g));
+	avg.setB(sqrt(sq_sum_b));
 	return avg;
 }
 
