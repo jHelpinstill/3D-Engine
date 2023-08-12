@@ -82,22 +82,12 @@ void TextBox::drawChar(Canvas& canvas, char c)
 		if ((letters[c].bytes[0] << j + i * 8) & 0x80000000)
 		{
 			buffer[i + 5 * (j + tail_shift)] = color;
-
-			//canvas.lerpDrawPoint(Point(x + (cursor_x + i) * scale, y + (cursor_y + j + tail_shift) * scale), scale, color);
-
-			//for (int k = 0; k < scale; k++) for (int l = 0; l < scale; l++)
-			//	canvas.drawPoint(x + cursor_x + i * scale + k, y + cursor_y + (j + tail_shift) * scale + l, color);
 		}
 	if (!width_reduce)
 		for (int j = 0; j < 8; j++)
 			if ((letters[c].bytes[1] << j) & 0x80000000)
 			{
 				buffer[4 + 5 * (j + tail_shift)] = color;
-
-				//canvas.lerpDrawPoint(Point(x + (cursor_x + 4) * scale, y + (cursor_y + j) * scale), scale, color);
-				
-				//for (int k = 0; k < scale; k++) for (int l = 0; l < scale; l++)
-				//	canvas.drawPoint(x + cursor_x + 4 * scale + k, y + cursor_y + (j + tail_shift) * scale + l, color);
 			}
 	//canvas.drawMatrix(x + cursor_x * scale, y + cursor_y * scale, 5, 11, buffer);
 	canvas.lerpDrawMatrix(Point(x + cursor_x * scale, y + cursor_y * scale), 5, 11, scale, buffer); 
