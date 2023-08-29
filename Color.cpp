@@ -1,4 +1,5 @@
 #include "Color.h"
+#include <cmath>
 
 Color::Color(int color)
 {
@@ -75,7 +76,48 @@ Color Color::operator*(Color color)
 	out.setR((getR() * color.getR()) / 255);
 	out.setG((getG() * color.getG()) / 255);
 	out.setB((getB() * color.getB()) / 255);
-	return color;
+	return out;
+}
+Color Color::average(Color* colors, int num_colors, float* weights)
+{
+	int sq_sum_a = 0;
+	int sq_sum_r = 0;
+	int sq_sum_g = 0;
+	int sq_sum_b = 0;
+
+	int a, r, g, b;
+	Color avg;
+	if (weights == nullptr)
+	{
+		for (int i = 0; i < num_colors; i++)
+		{
+			a = colors[i].getAlpha(); r = colors[i].getR(); g = colors[i].getG(); b = colors[i].getB();
+			sq_sum_a += a * a;
+			sq_sum_r += r * r;
+			sq_sum_g += g * g;
+			sq_sum_b += b * b;
+		}
+		avg.setAlpha(sqrt(sq_sum_a / num_colors));
+		avg.setR(sqrt(sq_sum_r / num_colors));
+		avg.setG(sqrt(sq_sum_g / num_colors));
+		avg.setB(sqrt(sq_sum_g / num_colors));
+		return avg;
+	}
+
+	// with weights
+	for (int i = 0; i < num_colors; i++)
+	{
+		a = colors[i].getAlpha(); r = colors[i].getR(); g = colors[i].getG(); b = colors[i].getB();
+		sq_sum_a += a * a * weights[i];
+		sq_sum_r += r * r * weights[i];
+		sq_sum_g += g * g * weights[i];
+		sq_sum_b += b * b * weights[i];
+	}
+	avg.setAlpha(sqrt(sq_sum_a));
+	avg.setR(sqrt(sq_sum_r));
+	avg.setG(sqrt(sq_sum_g));
+	avg.setB(sqrt(sq_sum_g));
+	return avg;
 }
 
 int Color::occludeFast(int color1, int color2)
@@ -188,3 +230,4 @@ Color Color::G = Color(0x0000ff00);
 Color Color::B = Color(0x000000ff);
 Color Color::BLACK = Color(0x00000000);
 Color Color::WHITE = Color(0x00ffffff);
+Color Color::ALPHA = Color(0xff000000);

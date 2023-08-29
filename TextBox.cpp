@@ -12,14 +12,14 @@ TextBox::TextBox(int x, int y, std::string text)
 	setPos(x, y);
 }
 
-TextBox::TextBox(int x, int y, std::string text, int scale)
+TextBox::TextBox(int x, int y, std::string text, float scale)
 {
 	print(text);
 	setPos(x, y);
 	setScale(scale);
 }
 
-TextBox::TextBox(int x, int y, std::string text, int scale, Color color)
+TextBox::TextBox(int x, int y, std::string text, float scale, Color color)
 {
 	print(text);
 	setPos(x, y);
@@ -38,6 +38,67 @@ void TextBox::setColor(Color color)
 	this->color = color;
 }
 
+void TextBox::drawChar(Canvas& canvas, char c)
+{
+	int tail_shift = 0;
+	int width_reduce = 0;
+	
+	switch (c)
+	{
+	case 'g':
+	case 'p':
+	case 'q':
+	case 'y':
+		tail_shift = 3;
+		break;
+	case ',':
+	case 'j':
+		tail_shift = 1;
+		break;
+	case 'i':
+	case 'l':
+		width_reduce = 0;
+		break;
+	case '\n':
+		cursor_x = 0;
+		cursor_y += 12;
+		return;
+	default:
+		break;
+	}
+
+	int* buffer = new int[55];
+	for (int i = 0; i < 55; i++)
+		buffer[i] = Color::ALPHA.val;
+
+
+	for (int i = width_reduce; i < 4; i++) for (int j = 0; j < 8; j++)
+		if ((letters[c].bytes[0] << j + i * 8) & 0x80000000)
+		{
+			buffer[i + 5 * (j + tail_shift)] = color.val;
+
+			//canvas.lerpDrawPoint(Point(x + (cursor_x + i) * scale, y + (cursor_y + j + tail_shift) * scale), scale, color);
+
+			//for (int k = 0; k < scale; k++) for (int l = 0; l < scale; l++)
+			//	canvas.drawPoint(x + cursor_x + i * scale + k, y + cursor_y + (j + tail_shift) * scale + l, color);
+		}
+	if (!width_reduce)
+		for (int j = 0; j < 8; j++)
+			if ((letters[c].bytes[1] << j) & 0x80000000)
+			{
+				buffer[4 + 5 * (j + tail_shift)] = color.val;
+
+				//canvas.lerpDrawPoint(Point(x + (cursor_x + 4) * scale, y + (cursor_y + j) * scale), scale, color);
+				
+				//for (int k = 0; k < scale; k++) for (int l = 0; l < scale; l++)
+				//	canvas.drawPoint(x + cursor_x + 4 * scale + k, y + cursor_y + (j + tail_shift) * scale + l, color);
+			}
+	//canvas.drawMatrix(x + cursor_x * scale, y + cursor_y * scale, 5, 11, buffer);
+	canvas.lerpDrawMatrix(Point(x + cursor_x * scale, y + cursor_y * scale), 5, 11, scale, buffer); 
+	cursor_x += 6;
+	delete[] buffer;
+}
+
 void TextBox::draw(Canvas &canvas)
 {
 //	std::cout << "drawing text: ";
@@ -47,46 +108,7 @@ void TextBox::draw(Canvas &canvas)
 	int length = this->text.length();
 	for(int c = 0; c < length; c++)
 	{
-//		std::cout << "	drawing '" << text[c] << "'" << std::endl;
-		int tail_shift = 0;
-		int width_reduce = 0;
-		switch(text[c])
-		{
-			case 'g':
-			case 'p':
-			case 'q':
-			case 'y':
-				tail_shift = 3;
-				break;
-			case ',':
-			case 'j':
-				tail_shift = 1;
-				break;
-			case 'i':
-			case 'l':
-				width_reduce = 0;
-				break;
-			case '\n':
-				cursor_x = 0;
-				cursor_y += 12 * scale;
-				continue;
-			default:
-				break;
-		}
-		for(int i = width_reduce; i < 4; i++) for(int j = 0; j < 8; j++)
-			if((letters[text[c]].bytes[0] << j + i * 8) & 0x80000000)
-			{
-				for(int k = 0; k < scale; k++) for(int l = 0; l < scale; l++)
-					canvas.drawPoint(x + cursor_x + i * scale + k, y + cursor_y + (j + tail_shift) * scale + l, color);
-			}
-		if(!width_reduce)
-			for(int j = 0; j < 8; j++)
-				if((letters[text[c]].bytes[1] << j) & 0x80000000)
-				{
-					for(int k = 0; k < scale; k++) for(int l = 0; l < scale; l++)
-						canvas.drawPoint(x + cursor_x + 4 * scale + k,y + cursor_y + (j + tail_shift) * scale + l, color);
-				}
-		cursor_x += scale * 6;
+		drawChar(canvas, text[c]);
 	}
 	cursor_x = 0;
 	cursor_y = 0;
@@ -97,12 +119,12 @@ int TextBox::getLength()
 	return text.length();
 }
 
-int TextBox::getScale()
+float TextBox::getScale()
 {
 	return scale;
 }
 
-void TextBox::setScale(int scale)
+void TextBox::setScale(float scale)
 {
 	this->scale = scale;
 }

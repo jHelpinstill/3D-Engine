@@ -7,12 +7,16 @@
 struct Point
 {
 	float x, y;
+	Point() {}
+	Point(float x, float y) { this->x = x; this->y = y; }
 };
 
 class Canvas
 {
 private:
-	Frame* frame;
+	Frame* frame = nullptr;
+
+	int cursor = 0;
 	
 	void swap(int &a, int &b);
 	void swap(float &a, float &b);
@@ -22,6 +26,10 @@ private:
 	void fillLowerTri(int x0, int x1, int x2, int y0, int y1, Color (*colorFunc)(int, int));
 	
 	bool updated = false;
+
+	void drawNextPoint(Color color);
+	void setCursor(int x, int y);
+	Color averageOfRegion(float x, float y, float region_width, float region_height, int* buffer, int width, int height, Color background = Color::ALPHA);
 	
 	static Color defaultColorFunc(int x, int y);
 	static Color default_color;
@@ -32,6 +40,10 @@ public:
 	
 	int getWidth();
 	int getHeight();
+	void getFrameRegion(int x, int y, int width, int height, int* buffer);
+
+	void drawMatrix(int x, int y, int image_width, int image_height, int* buffer);
+	void lerpDrawMatrix(Point pos, int image_width, int image_height, float scale, int* buffer);
 	
 	void drawPoint(int x, int y, Color color = Color(0));
 	void drawLine(int x0, int y0, int x1, int y1, Color color = Color(0));
@@ -45,6 +57,7 @@ public:
 	void fillTriangle(int x0, int y0, int x1, int y1, int x2, int y2, Color color);
 	
 	void drawPoint(Point p, Color color = Color(0));
+	void lerpDrawPoint(Point p, float size, Color color = Color::BLACK);
 	void drawLine(Point p0, Point p1, Color color = Color(0));
 	void drawRect(Point p, int width, int height, Color color = Color(0));
 	void fillRect(Point p, int width, int height, Color color = Color(0));
