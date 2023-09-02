@@ -265,7 +265,27 @@ Color Canvas::averageOfRegion(float x, float y, float region_width, float region
 	return color_out;
 }
 
-void Canvas::drawMatrix(int x, int y, int image_width, int image_height, int* buffer)
+///// UNFINISHED FIX BEFORE USE! /////
+Color Canvas::bilinearInterp(Point p, int width, int height, Color* buffer)
+{
+	//if (p.x > width - 1) return Color::ALPHA;
+	//if (p.x < 0) return Color::ALPHA;
+	//if (p.y > height - 1) return Color::ALPHA;
+	//if (p.y < 0) return Color::ALPHA;
+
+	if (p.x < -1) return Color::ALPHA;
+	if (p.x > width) return Color::ALPHA;
+	if (p.y < -1) return Color::ALPHA;
+	if (p.y > height) return Color::ALPHA;
+
+	int row = width * (int)p.y;
+	int col = (int)p.x;
+
+	Color colors[4];
+	//if()
+}
+
+void Canvas::drawMatrix(int x, int y, int image_width, int image_height, Color* buffer)
 {
 	for (int j = 0; j < image_height; j++)
 	{
@@ -275,6 +295,7 @@ void Canvas::drawMatrix(int x, int y, int image_width, int image_height, int* bu
 	}
 }
 
+///// UNFINISHED FIX BEFORE USE! /////
 void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float scale, Color* buffer)
 {
 	int width = (int)(image_width * scale) + 2;
@@ -303,6 +324,12 @@ void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float 
 		setCursor(x0, y0 + j);
 		for (int i = 0; i < width; i++)
 		{
+			float u = i - t0 / scale;
+			float v = j - s0 / scale;
+			float t = u - floor(u);
+			float s = v - floor(v);
+
+			//drawNextPoint();
 			drawNextPoint(averageOfRegion((i - t0) / scale, (j - s0) / scale, 1.0 / scale, 1.0 / scale, buffer, image_width, image_height));
 		}
 	}

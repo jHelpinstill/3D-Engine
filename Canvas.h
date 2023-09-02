@@ -30,7 +30,8 @@ private:
 	void drawNextPoint(Color color);
 	void setCursor(int x, int y);
 	Color averageOfRegion(float x, float y, float region_width, float region_height, Color* buffer, int width, int height, Color background = Color::ALPHA);
-	
+	Color bilinearInterp(Point p, int width, int height, Color* buffer);
+
 	static Color defaultColorFunc(int x, int y);
 	static Color default_color;
 	
@@ -42,7 +43,7 @@ public:
 	int getHeight();
 	void getFrameRegion(int x, int y, int width, int height, int* buffer);
 
-	void drawMatrix(int x, int y, int image_width, int image_height, int* buffer);
+	void drawMatrix(int x, int y, int image_width, int image_height, Color* buffer);
 	void lerpDrawMatrix(Point pos, int image_width, int image_height, float scale, Color* buffer);
 	
 	void drawPoint(int x, int y, Color color = Color(0));
