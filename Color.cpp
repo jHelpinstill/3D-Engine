@@ -124,10 +124,11 @@ Color Color::average(Color* colors, int num_colors, float* weights)
 void Color::expandNextColor(Color* img_buffer, int& buffer_index, std::string f, Color c)
 {
 	std::stringstream ss(f);
-	if (isdigit(ss.peek()))
+	ss.get();
+	if (isdigit(ss.peek()) || ss.fail())
 	{
 		int num_reps;
-		ss >> num_reps;
+		ss >> std::dec >> num_reps;
 		for (int i = 0; i < num_reps; i++)
 			img_buffer[buffer_index++] = c;
 	}
@@ -141,7 +142,7 @@ Color* Color::createTexture(int width, int height, std::string format)
 	Color* img_buffer = new Color[width * height];
 	int buffer_index = 0;
 	int size = format.size();
-	for (int i = 0; i < size; size++)
+	for (int i = 0; i < size; i++)
 	{
 		switch (format[i])
 		{
@@ -174,9 +175,11 @@ Color* Color::createTexture(int width, int height, std::string format)
 			expandNextColor(img_buffer, buffer_index, format.substr(i), custom_color);
 			break;
 		}
+		default:
+			continue;
 		}
 	}
-
+	return img_buffer;
 }
 
 int Color::occludeFast(int color1, int color2)
