@@ -58,6 +58,22 @@ void Camera::draw(Canvas &canvas, Mesh* mesh, LightSource* light)
 	endDraw();
 }
 
+void Camera::drawBall(Canvas& canvas, Vec3 pos, float radius, Color color)
+{
+	beginDraw(canvas);
+
+	if (pointInView(pos))
+	{
+		Vec3 point_on_ball = pos + this->transform.getMat().rotateDirVector(Vec3::Y) * radius;
+		Point center_pixel = mapVecToDisplay(canvas, pos);
+		float pixels_radius = center_pixel.x - mapVecToDisplay(canvas, point_on_ball).x;
+		canvas.fillCircle(mapVecToDisplay(canvas, pos), pixels_radius, color);
+	}
+
+
+	endDraw();
+}
+
 void Camera::drawHorizon(Canvas &canvas, Color ground_color, Color sky_color)
 {
 	Vec3 forward = transform.getMat().rotateDirVector(Vec3::X);

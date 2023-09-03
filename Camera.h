@@ -44,6 +44,7 @@ public:
 	Camera(Vec3 pos);
 	
 	void draw(Canvas &canvas, Mesh* mesh, LightSource* light);
+	void drawBall(Canvas& canvas, Vec3 pos, float radius, Color color);
 	void drawHorizon(Canvas &canvas, Color ground_color, Color sky_color);
 	
 	float getFOVVal();		
