@@ -30,7 +30,7 @@
     <ClCompile Include="KeyInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Engine3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Mat4.cpp">
@@ -61,9 +61,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Vec3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FrameLoop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

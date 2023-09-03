@@ -21,27 +21,6 @@ namespace Engine3D
 	bool init_box = false;
 }
 
-//void frameLoop(HWND hwnd)
-//{
-//	static std::vector<Mesh*> mesh_list;
-//	static Camera camera(Vec3(-4, 2, 0.5));
-//	
-//	if(!Engine3D::init_box)
-//	{
-//		mesh_list.push_back(new Mesh("mesh_files/box_mesh.txt"));
-//		Engine3D::init_box = true;
-//		std::cout << "box added to mesh list." << std::endl;
-//	}
-//	
-//	render(Engine3D::frame, camera, Engine3D::mouse, Engine3D::keyboard, mesh_list);
-//	
-//	Engine3D::mouse.update(hwnd);
-//	Engine3D::keyboard.update();
-//	
-//	InvalidateRect(hwnd, NULL, false);
-//	UpdateWindow(hwnd);
-//}
-
 /* This is where all the input to the window goes to */
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
 	switch(Message) {
