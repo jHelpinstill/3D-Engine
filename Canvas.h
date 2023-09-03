@@ -19,13 +19,17 @@ struct DepthBuffer
 	DepthBuffer() {}
 	DepthBuffer(int width, int height)
 	{
+		set(width, height);
+	}
+	void set(int width, int height)
+	{
+		delete[] buffer;
 		buffer = new float[width * height];
 		for (int i = 0; i < (width * height); i++)
 			buffer[i] = -1;
 		this->width = width;
 		this->height = height;
 	}
-
 	bool check(int x, int y, float depth)
 	{
 		int i = x + width * y;
@@ -41,7 +45,7 @@ struct DepthBuffer
 		}
 		return false;
 	}
-	~DepthBuffer() { delete buffer; }
+	~DepthBuffer() { delete[] buffer; }
 };
 
 class Canvas

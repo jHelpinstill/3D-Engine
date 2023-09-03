@@ -7,7 +7,7 @@
 Canvas::Canvas(Frame* frame)
 {
 	this->frame = frame;
-	depth_buffer = DepthBuffer(frame->width, frame->height);
+	depth_buffer.set(frame->width, frame->height);
 }
 
 int Canvas::getWidth()
@@ -806,11 +806,6 @@ int Canvas::signOf(float a)
 	if(a >= 0)
 		return 1;
 	return -1;
-}
-
-Canvas::~Canvas()
-{
-	//delete depth_buffer;
 }
 
 Color Canvas::default_color = Color(0x0);
