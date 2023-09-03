@@ -2,9 +2,12 @@
 #include <iostream>
 #include <cmath>
 
+#include "Camera.h"
+
 Canvas::Canvas(Frame* frame)
 {
 	this->frame = frame;
+	depth_buffer = DepthBuffer(frame->width, frame->height);
 }
 
 int Canvas::getWidth()
@@ -35,6 +38,14 @@ void Canvas::drawPoint(int x, int y, Color color)
 		return;
 	int p = x + ((frame->height - 1) - y) * frame->width;
 	frame->pixels[p] = Color::occludeFast(color.val, frame->pixels[p]); //color.occludeFast(frame->pixels[p]);
+}
+
+void Canvas::drawPoint(int x, int y, Color (*colorFunc)(int, int, DepthBuffer&))
+{
+	if (x >= frame->width || y >= frame->height || x < 0 || y < 0)
+		return;
+	int p = x + ((frame->height - 1) - y) * frame->width;
+	frame->pixels[p] = Color::occludeFast(colorFunc(x, y, depth_buffer).val, frame->pixels[p]);
 }
 
 void Canvas::drawNextPoint(Color color)
@@ -491,6 +502,34 @@ void Canvas::drawCircle(int x, int y, int radius, Color color)
 	}
 }
 
+void Canvas::fillCircle(int x, int y, int radius, Color (*colorFunc)(int, int, DepthBuffer&))
+{
+	int point_x = radius;
+	int point_y = 0;
+	float accumulator = 0.5;
+
+	while (point_y <= point_x)
+	{
+		for (int i = 0; i < point_y * 2; i++)
+		{
+			drawPoint(x + point_x, y + point_y - i, colorFunc);
+			drawPoint(x - point_x, y + point_y - i, colorFunc);
+		}
+		for (int i = 0; i < point_x * 2; i++)
+		{
+			drawPoint(x + point_y, y + point_x - i, colorFunc);
+			drawPoint(x - point_y, y + point_x - i, colorFunc);
+		}
+		accumulator += point_x - sqrt(point_x * point_x - 2 * point_y - 1);
+		if (accumulator > 1)
+		{
+			accumulator -= 1;
+			point_x--;
+		}
+		point_y++;
+	}
+}
+
 void Canvas::fillCircle(int x, int y, int radius, Color color)
 {
 	int point_x = radius;
@@ -767,6 +806,11 @@ int Canvas::signOf(float a)
 	if(a >= 0)
 		return 1;
 	return -1;
+}
+
+Canvas::~Canvas()
+{
+	//delete depth_buffer;
 }
 
 Color Canvas::default_color = Color(0x0);

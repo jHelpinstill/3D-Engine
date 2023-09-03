@@ -35,6 +35,16 @@ private:
 	static Color lightingColorFunc(int x, int y);
 	static int* current_ambient;
 	static float** current_db;
+
+	struct
+	{
+		Vec3 pos = Vec3::zero; // transformed into camera view
+		float radius = 0;
+		Color color = Color::BLACK;
+		float fov = 1;
+		void set(Vec3 pos, float radius, Color color, float fov) { this->pos = pos; this->radius = radius; this->color = color; this->fov = fov; }
+	} static ball_depth_info;
+	static Color checkDepthBall(int x, int y, DepthBuffer& depth_buffer);
 	
 public:
 	Transform transform;

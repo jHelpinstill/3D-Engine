@@ -61,20 +61,22 @@ void Camera::drawMesh(Canvas &canvas, Mesh* mesh, LightSource* light)
 
 void Camera::drawBall(Canvas& canvas, Vec3 pos, float radius, Color color)
 {
-	if (depth_buffer == nullptr) beginDraw(canvas);
+	//if (depth_buffer == nullptr) beginDraw(canvas);
 
 	if (pointInView(pos))
 	{
 		Vec3 point_on_ball = pos + this->transform.getMat().rotateDirVector(Vec3::Y) * radius;
 		Point center_pixel = mapVecToDisplay(canvas, pos);
 		float pixels_radius = center_pixel.x - mapVecToDisplay(canvas, point_on_ball).x;
-		canvas.fillCircle(mapVecToDisplay(canvas, pos), pixels_radius, color);
+
+		ball_depth_info.set(transform.getMat() * pos, radius, color, FOV_value);
+		canvas.fillCircle(center_pixel.x, center_pixel.y, pixels_radius, checkDepthBall);
 	}
 }
 
 void Camera::drawLine(Canvas& canvas, Vec3 start, Vec3 end, Color color)
 {
-	if (depth_buffer == nullptr) beginDraw(canvas);
+	//if (depth_buffer == nullptr) beginDraw(canvas);
 	
 	if (pointInView(start) && pointInView(end))
 	{
@@ -212,7 +214,30 @@ void Camera::endDraw()
 	depth_buffer = nullptr;
 }
 
+Color Camera::checkDepthBall(int x, int y, DepthBuffer& depth_buffer)
+{
+	float a = ((2 * x / (float)depth_buffer.width) - 1) * ball_depth_info.fov;
+	float b = (depth_buffer.height / (float)depth_buffer.width - 2 * y / (float)depth_buffer.width) * ball_depth_info.fov;
+	Vec3 ray = Vec3(1, a, b).unit();
+
+	float t_ca = Vec3::dot(ball_depth_info.pos, ray);
+	if (t_ca < 0) return Color::ALPHA;
+
+	float d_sq = ball_depth_info.pos.sqMag() - (t_ca * t_ca);
+	float r_sq = ball_depth_info.radius * ball_depth_info.radius;
+	if (d_sq > r_sq) return Color::ALPHA;
+
+	float t_hc = sqrt(r_sq - d_sq);
+	float depth = t_ca - t_hc;
+
+	if (depth_buffer.check(x, y, depth))
+		return ball_depth_info.color;
+	return Color::ALPHA;
+}
+
 LightSource* Camera::current_light = NULL;
 Mesh* Camera::current_mesh = NULL;
 int* Camera::current_ambient = NULL;
 float** Camera::current_db = NULL;
+
+decltype(Camera::ball_depth_info) Camera::ball_depth_info;
