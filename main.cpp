@@ -3,49 +3,44 @@
 #include <iostream>
 #include <vector>
 
-#include "MouseInfo.h"
-#include "KeyInfo.h"
-#include "Canvas.h"
-#include "Frame.h"
-#include "Render.h"
+#include "Engine3D.h"
 
-#include "Mesh.h"
-#include "Camera.h"
-#include "Vec3.h"
-
-constexpr auto FRAME_MILLIS = 10;
-
-Frame frame = {0};
-
-static MouseInfo mouse;
-static KeyInfo keyboard;
-
-static BITMAPINFO frame_bitmap_info;
-static HBITMAP frame_bitmap = 0;
-static HDC frame_device_context = 0;
-
-static bool init_box = false;
-
-void mainLoop(HWND hwnd)
+namespace Engine3D
 {
-	static std::vector<Mesh*> mesh_list;
-	static Camera camera(Vec3(-4, 2, 0.5));
-	
-	if(!init_box)
-	{
-		mesh_list.push_back(new Mesh("mesh_files/box_mesh.txt"));
-		init_box = true;
-		std::cout << "box added to mesh list." << std::endl;
-	}
-	
-	render(frame, camera, mouse, keyboard, mesh_list);
-	
-	mouse.update(hwnd);
-	keyboard.update();
-	
-	InvalidateRect(hwnd, NULL, false);
-	UpdateWindow(hwnd);
+	int millis_per_frame = 10;
+
+	Frame frame = { 0 };
+
+	MouseInfo mouse;
+	KeyInfo keyboard;
+
+	BITMAPINFO frame_bitmap_info;
+	HBITMAP frame_bitmap = 0;
+	HDC frame_device_context = 0;
+
+	bool init_box = false;
 }
+
+//void frameLoop(HWND hwnd)
+//{
+//	static std::vector<Mesh*> mesh_list;
+//	static Camera camera(Vec3(-4, 2, 0.5));
+//	
+//	if(!Engine3D::init_box)
+//	{
+//		mesh_list.push_back(new Mesh("mesh_files/box_mesh.txt"));
+//		Engine3D::init_box = true;
+//		std::cout << "box added to mesh list." << std::endl;
+//	}
+//	
+//	render(Engine3D::frame, camera, Engine3D::mouse, Engine3D::keyboard, mesh_list);
+//	
+//	Engine3D::mouse.update(hwnd);
+//	Engine3D::keyboard.update();
+//	
+//	InvalidateRect(hwnd, NULL, false);
+//	UpdateWindow(hwnd);
+//}
 
 /* This is where all the input to the window goes to */
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
@@ -72,7 +67,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 							paint.rcPaint.left, paint.rcPaint.top,
 							paint.rcPaint.right - paint.rcPaint.left,
 							paint.rcPaint.bottom - paint.rcPaint.top,
-							frame_device_context,
+							Engine3D::frame_device_context,
 							paint.rcPaint.left, paint.rcPaint.top,
 							SRCCOPY);
 			EndPaint(hwnd, &paint);
@@ -80,67 +75,67 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 		}
 	  case WM_MOUSEMOVE:	
 		{
-			mouse.x = lParam & (long)0xffff;
-			mouse.y = (lParam & (long)0xffff0000) >> 16;
-			mouse.movedEvent(hwnd);
+			Engine3D::mouse.x = lParam & (long)0xffff;
+			Engine3D::mouse.y = (lParam & (long)0xffff0000) >> 16;
+			Engine3D::mouse.movedEvent(hwnd);
 			return 0;
 		}
 		case WM_MOUSELEAVE:
 		{
-			mouse.leftWindowEvent();
-			mouse.release();
+			Engine3D::mouse.leftWindowEvent();
+			Engine3D::mouse.release();
 //			std::cout << "mouse left window" << std::endl;
 			return 0;
 		}
 		case WM_MOUSEHOVER:
 		{
-			mouse.enteredWindowEvent(hwnd);
+			Engine3D::mouse.enteredWindowEvent(hwnd);
 			return 0;
 		}
 		case WM_LBUTTONDOWN:
 		{
-			mouse.leftDownEvent();
+			Engine3D::mouse.leftDownEvent();
 			return 0;
 		}
 		case WM_LBUTTONUP:
 		{
-			mouse.leftUpEvent();
+			Engine3D::mouse.leftUpEvent();
 			return 0;
 		}
 		case WM_RBUTTONDOWN:
 		{
-			mouse.rightDownEvent();
+			Engine3D::mouse.rightDownEvent();
 			return 0;
 		}
 		case WM_RBUTTONUP:
 		{
-			mouse.rightUpEvent();
+			Engine3D::mouse.rightUpEvent();
 			return 0;
 		}
 		case WM_KEYDOWN:
 		{		
 //			std::cout << "key down: " << wParam << std::endl;
-			keyboard.keyDownEvent(wParam);
+			Engine3D::keyboard.keyDownEvent(wParam);
 	      return 0;
 	   }
 
     	case WM_KEYUP:
       {		
 //			std::cout << "key up: " << wParam << std::endl;
-			keyboard.keyUpEvent(wParam);
+			Engine3D::keyboard.keyUpEvent(wParam);
 	      return 0;
 	   }
 		case WM_SIZE:
 		{			
-			frame_bitmap_info.bmiHeader.biWidth = LOWORD(lParam);
-			frame_bitmap_info.bmiHeader.biHeight = HIWORD(lParam);
+			Engine3D::frame_bitmap_info.bmiHeader.biWidth = LOWORD(lParam);
+			Engine3D::frame_bitmap_info.bmiHeader.biHeight = HIWORD(lParam);
 			
-			if(frame_bitmap) DeleteObject(frame_bitmap);
-			frame_bitmap = CreateDIBSection(NULL, &frame_bitmap_info, DIB_RGB_COLORS, (void**)&frame.pixels, 0, 0);
-			SelectObject(frame_device_context, frame_bitmap);
+			if(Engine3D::frame_bitmap) DeleteObject(Engine3D::frame_bitmap);
+			Engine3D::frame_bitmap = CreateDIBSection(NULL, &Engine3D::frame_bitmap_info, DIB_RGB_COLORS, (void**)&Engine3D::frame.pixels, 0, 0);
+			SelectObject(Engine3D::frame_device_context, Engine3D::frame_bitmap);
 			
-			frame.width = frame_bitmap_info.bmiHeader.biWidth;
-			frame.height = frame_bitmap_info.bmiHeader.biHeight;
+			Engine3D::frame.width = Engine3D::frame_bitmap_info.bmiHeader.biWidth;
+			Engine3D::frame.height = Engine3D::frame_bitmap_info.bmiHeader.biHeight;
 			break;
 		}
 		
@@ -175,11 +170,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}
 	
-	frame_bitmap_info.bmiHeader.biSize = sizeof(frame_bitmap_info.bmiHeader);
-	frame_bitmap_info.bmiHeader.biPlanes = 1;
-	frame_bitmap_info.bmiHeader.biBitCount = 32;
-	frame_bitmap_info.bmiHeader.biCompression = BI_RGB;
-	frame_device_context = CreateCompatibleDC(0);
+	Engine3D::frame_bitmap_info.bmiHeader.biSize = sizeof(Engine3D::frame_bitmap_info.bmiHeader);
+	Engine3D::frame_bitmap_info.bmiHeader.biPlanes = 1;
+	Engine3D::frame_bitmap_info.bmiHeader.biBitCount = 32;
+	Engine3D::frame_bitmap_info.bmiHeader.biCompression = BI_RGB;
+	Engine3D::frame_device_context = CreateCompatibleDC(0);
 
 	hwnd = CreateWindowEx(WS_EX_CLIENTEDGE, L"WindowClass", L"Jake's Renderererer",WS_VISIBLE|WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, /* x */
@@ -204,15 +199,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	 	}
 	   else
 	   {
-	   	typedef std::chrono::high_resolution_clock hiresclock;
-	      static auto timer = hiresclock::now();
-	      double millisec = (hiresclock::now() - timer).count() / 1000000.0;
-	      if(millisec > FRAME_MILLIS)
-	      {
-	      	timer = hiresclock::now();
-	        	mainLoop(hwnd);
-	        	frame.dt = millisec / 1000.0;
-	      }
+	   		typedef std::chrono::high_resolution_clock hiresclock;
+			static auto timer = hiresclock::now();
+			double millisec = (hiresclock::now() - timer).count() / 1000000.0;
+			if(millisec > Engine3D::millis_per_frame)
+			{
+	      		timer = hiresclock::now();
+				Engine3D::frame.dt = millisec / 1000.0;
+
+	        	Engine3D::frameLoop(hwnd);	// where library user implements their code
+
+				Engine3D::mouse.update(hwnd);
+				Engine3D::keyboard.update();
+
+				InvalidateRect(hwnd, NULL, false);
+				UpdateWindow(hwnd);
+			}
 		}
 	}
 	return msg.wParam;

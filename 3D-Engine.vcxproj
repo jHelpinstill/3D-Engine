@@ -23,6 +23,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="FrameLoop.cpp" />
     <ClCompile Include="KeyInfo.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mat4.cpp" />
@@ -37,6 +38,7 @@
     <ClCompile Include="Vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine3D.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Canvas.h" />
