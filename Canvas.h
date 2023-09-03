@@ -3,6 +3,7 @@
 
 #include "Frame.h"
 #include "Color.h"
+class TextBox;
 class Camera;
 
 struct Point
@@ -32,7 +33,7 @@ struct DepthBuffer
 	}
 	bool check(int x, int y, float depth)
 	{
-		int i = x + width * y;
+		int i = x + y * width;
 		if (buffer[i] < 0)
 		{
 			buffer[i] = depth;
@@ -108,7 +109,8 @@ public:
 	void fillTriangle(Point p0, Point p1, Point p2, Color (*colorFunc)(int, int));
 	void fillTriangle(Point p0, Point p1, Point p2, Color color);
 
-	~Canvas();
+	void drawDebug(Point p, float scale, Color color = Color::BLACK);
+	static TextBox debug;
 };
 
 #endif

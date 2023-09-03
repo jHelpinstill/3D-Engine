@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "TextBox.h"
 #include <cmath>
 
 Camera::Camera(Vec3 pos)
@@ -8,9 +9,7 @@ Camera::Camera(Vec3 pos)
 
 void Camera::beginDraw(Canvas &canvas)
 {	
-	if (depth_buffer != nullptr) endDraw();
-
-	depth_buffer = new float[canvas.getWidth() * canvas.getHeight()];
+	this->canvas = &canvas;
 
 	float aspect_ratio = canvas.getWidth() / (float)canvas.getHeight();
 	frustum_normals[0] = (Vec3::X * FOV_value + Vec3::Y).unit();
@@ -24,12 +23,10 @@ void Camera::attachToStaticVariables(Mesh* mesh, LightSource* light)
 	current_light = light;
 	current_mesh = mesh;
 	current_ambient = &ambient_light;
-	current_db = &depth_buffer;
 }
 
 void Camera::drawMesh(Canvas &canvas, Mesh* mesh, LightSource* light)
 {
-	if (depth_buffer == nullptr) beginDraw(canvas);
 	attachToStaticVariables(mesh, light);
 	
 	// allocate depth buffer, assign frustum normals
@@ -69,7 +66,7 @@ void Camera::drawBall(Canvas& canvas, Vec3 pos, float radius, Color color)
 		Point center_pixel = mapVecToDisplay(canvas, pos);
 		float pixels_radius = center_pixel.x - mapVecToDisplay(canvas, point_on_ball).x;
 
-		ball_depth_info.set(transform.getMat() * pos, radius, color, FOV_value);
+		ball_depth_info.set(transform.getInverse() * pos, radius, color, FOV_value);
 		canvas.fillCircle(center_pixel.x, center_pixel.y, pixels_radius, checkDepthBall);
 	}
 }
@@ -210,15 +207,28 @@ float Camera::getFOVVal()
 
 void Camera::endDraw()
 {
-	delete depth_buffer;
-	depth_buffer = nullptr;
+
+}
+
+Vec3 Camera::getRay(int x, int y, int width, int height, float fov_val)
+{
+	float a = -((2 * x / (float)width) - 1) * fov_val;
+	float b = ((height - 2 * y) / (float)width) * fov_val;
+	return Vec3(1, a, b).unit();
+}
+
+Vec3 Camera::getRay(int x, int y)
+{
+	return getRay(x, y, this->canvas->getWidth(), this->canvas->getHeight(), this->FOV_value);
 }
 
 Color Camera::checkDepthBall(int x, int y, DepthBuffer& depth_buffer)
 {
-	float a = ((2 * x / (float)depth_buffer.width) - 1) * ball_depth_info.fov;
-	float b = (depth_buffer.height / (float)depth_buffer.width - 2 * y / (float)depth_buffer.width) * ball_depth_info.fov;
-	Vec3 ray = Vec3(1, a, b).unit();
+	//float a = -((2 * x / (float)depth_buffer.width) - 1) * ball_depth_info.fov;
+	//float b = ((depth_buffer.height - 2 * y) / (float)depth_buffer.width) * ball_depth_info.fov;
+	//Vec3 ray = Vec3(1, a, b).unit();
+
+	Vec3 ray = getRay(x, y, depth_buffer.width, depth_buffer.height, ball_depth_info.fov);
 
 	float t_ca = Vec3::dot(ball_depth_info.pos, ray);
 	if (t_ca < 0) return Color::ALPHA;

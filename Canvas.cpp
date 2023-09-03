@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "Camera.h"
+#include "TextBox.h"
 
 Canvas::Canvas(Frame* frame)
 {
@@ -808,4 +809,13 @@ int Canvas::signOf(float a)
 	return -1;
 }
 
+void Canvas::drawDebug(Point p, float scale, Color color)
+{
+	debug.setPos(p);
+	debug.setScale(scale);
+	debug.setColor(color);
+	debug.draw(*this);
+}
+
 Color Canvas::default_color = Color(0x0);
+TextBox Canvas::debug;

@@ -13,7 +13,6 @@ class LightSource;
 class Camera
 {
 private:
-	float* depth_buffer = nullptr;
 	Vec3 frustum_normals[4];
 	float clipping_distance = 0.01;
 	int ambient_light = 25;
@@ -46,6 +45,8 @@ private:
 	} static ball_depth_info;
 	static Color checkDepthBall(int x, int y, DepthBuffer& depth_buffer);
 	
+	Canvas* canvas = nullptr;
+
 public:
 	Transform transform;
 	
@@ -59,6 +60,9 @@ public:
 	void drawBall(Canvas& canvas, Vec3 pos, float radius, Color color);
 	void drawLine(Canvas& canvas, Vec3 start, Vec3 end, Color color);
 	void drawHorizon(Canvas &canvas, Color ground_color, Color sky_color);
+
+	static Vec3 getRay(int x, int y, int width, int height, float fov_val);
+	Vec3 getRay(int x, int y);
 	
 	float getFOVVal();		
 };
