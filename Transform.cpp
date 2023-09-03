@@ -20,8 +20,8 @@ void Transform::setPos(Vec3 v)
 {
 	for(int i = 0; i < 3; i++)
 	{
-		mat.m[i][3] = v.n[i];
-		inverse_mat.m[i][3] = -v.n[i];
+		mat.element(i, 3) = v.n[i];
+		inverse_mat.element(i, 3) = -v.n[i];
 	}
 }
 
@@ -29,8 +29,8 @@ void Transform::translate(Vec3 v)
 {
 	for(int i = 0; i < 3; i++)
 	{
-		mat.m[i][3] += v.n[i];
-		inverse_mat.m[i][3] -= v.n[i];
+		mat.element(i, 3) += v.n[i];
+		inverse_mat.element(i, 3) -= v.n[i];
 	}
 }
 
@@ -40,11 +40,11 @@ void Transform::setRot(Quat q)
 	Q = q.mat();
 	
 	for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++)
-		mat.m[i][j] = Q.m[i][j];
+		mat.element(i, j) = Q.element(i, j);
 	
 	
 	for(int i = 0; i < 3; i++)
-		B.m[i][3] = -mat.m[i][3];
+		B.element(i, 3) = -mat.element(i, 3);
 	
 	inverse_mat = q.inverse().mat() * B;
 }
@@ -59,6 +59,6 @@ Vec3 Transform::getPos()
 {
 	Vec3 pos;
 	for(int i = 0; i < 3; i++)
-		pos.n[i] = mat.m[i][3];
+		pos.n[i] = mat.element(i, 3);
 	return pos;
 }

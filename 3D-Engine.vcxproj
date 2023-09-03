@@ -26,6 +26,7 @@
     <ClCompile Include="KeyInfo.cpp" />
     <ClCompile Include="Engine3D.cpp" />
     <ClCompile Include="Mat4.cpp" />
+    <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MouseInfo.cpp" />
     <ClCompile Include="PlayerController.cpp" />
@@ -46,6 +47,7 @@
     <ClInclude Include="KeyInfo.h" />
     <ClInclude Include="LightSource.h" />
     <ClInclude Include="Mat4.h" />
+    <ClInclude Include="Matrix.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MouseInfo.h" />
     <ClInclude Include="PlayerController.h" />
