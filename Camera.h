@@ -13,7 +13,7 @@ class LightSource;
 class Camera
 {
 private:
-	float* depth_buffer;
+	float* depth_buffer = nullptr;
 	Vec3 frustum_normals[4];
 	float clipping_distance = 0.01;
 	int ambient_light = 25;
@@ -27,8 +27,7 @@ private:
 	bool pointInView(Vec3 p);
 	bool transformedPointInView(Vec3 p, int* which_plane = NULL);
 	
-	void beginDraw(Canvas &canvas);
-	void endDraw();
+	
 	void attachToStaticVariables(Mesh* mesh, LightSource* light);
 	
 	static LightSource* current_light;
@@ -42,9 +41,13 @@ public:
 	
 	Camera(){}
 	Camera(Vec3 pos);
+
+	void beginDraw(Canvas& canvas);
+	void endDraw();
 	
-	void draw(Canvas &canvas, Mesh* mesh, LightSource* light);
+	void drawMesh(Canvas &canvas, Mesh* mesh, LightSource* light);
 	void drawBall(Canvas& canvas, Vec3 pos, float radius, Color color);
+	void drawLine(Canvas& canvas, Vec3 start, Vec3 end, Color color);
 	void drawHorizon(Canvas &canvas, Color ground_color, Color sky_color);
 	
 	float getFOVVal();		

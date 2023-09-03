@@ -8,6 +8,8 @@ Camera::Camera(Vec3 pos)
 
 void Camera::beginDraw(Canvas &canvas)
 {	
+	if (depth_buffer != nullptr) endDraw();
+
 	depth_buffer = new float[canvas.getWidth() * canvas.getHeight()];
 
 	float aspect_ratio = canvas.getWidth() / (float)canvas.getHeight();
@@ -25,8 +27,9 @@ void Camera::attachToStaticVariables(Mesh* mesh, LightSource* light)
 	current_db = &depth_buffer;
 }
 
-void Camera::draw(Canvas &canvas, Mesh* mesh, LightSource* light)
+void Camera::drawMesh(Canvas &canvas, Mesh* mesh, LightSource* light)
 {
+	if (depth_buffer == nullptr) beginDraw(canvas);
 	attachToStaticVariables(mesh, light);
 	
 	// allocate depth buffer, assign frustum normals
@@ -53,14 +56,12 @@ void Camera::draw(Canvas &canvas, Mesh* mesh, LightSource* light)
 	}
 	
 	//drawNormals(canvas, mesh);
-	
-	// delete depth buffer
-	endDraw();
+
 }
 
 void Camera::drawBall(Canvas& canvas, Vec3 pos, float radius, Color color)
 {
-	beginDraw(canvas);
+	if (depth_buffer == nullptr) beginDraw(canvas);
 
 	if (pointInView(pos))
 	{
@@ -69,9 +70,16 @@ void Camera::drawBall(Canvas& canvas, Vec3 pos, float radius, Color color)
 		float pixels_radius = center_pixel.x - mapVecToDisplay(canvas, point_on_ball).x;
 		canvas.fillCircle(mapVecToDisplay(canvas, pos), pixels_radius, color);
 	}
+}
 
-
-	endDraw();
+void Camera::drawLine(Canvas& canvas, Vec3 start, Vec3 end, Color color)
+{
+	if (depth_buffer == nullptr) beginDraw(canvas);
+	
+	if (pointInView(start) && pointInView(end))
+	{
+		canvas.drawLine(mapVecToDisplay(canvas, start), mapVecToDisplay(canvas, end), color);
+	}
 }
 
 void Camera::drawHorizon(Canvas &canvas, Color ground_color, Color sky_color)
@@ -201,6 +209,7 @@ float Camera::getFOVVal()
 void Camera::endDraw()
 {
 	delete depth_buffer;
+	depth_buffer = nullptr;
 }
 
 LightSource* Camera::current_light = NULL;
