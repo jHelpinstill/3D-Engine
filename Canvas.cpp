@@ -431,6 +431,17 @@ void Canvas::drawRect(int x, int y, int width, int height, Color color)
 	}
 }
 
+void Canvas::fillRect(int x, int y, int width, int height, Color(*colorFunc)(int, int, DepthBuffer&))
+{
+	for (int i = 0; i < width; i++)
+	{
+		for (int j = 0; j < height; j++)
+		{
+			drawPoint(x + i, y + j, colorFunc);
+		}
+	}
+}
+
 void Canvas::fillRect(int x, int y, int width, int height, Color color)
 {
 	if (x >= frame->width) return;

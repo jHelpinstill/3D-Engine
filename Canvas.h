@@ -90,6 +90,7 @@ public:
 	void drawLine(int x0, int y0, int x1, int y1, Color color = Color(0));
 	void drawRect(int x, int y, int width, int height, Color color = Color(0));
 	void fillRect(int x, int y, int width, int height, Color color = Color(0));
+	void fillRect(int x, int y, int width, int height, Color(*colorFunc)(int, int, DepthBuffer&));
 	void fill(Color color);
 	void drawCircle(int x, int y, int radius, Color color = Color(0));
 	void fillCircle(int x, int y, int radius, Color color = Color(0));
