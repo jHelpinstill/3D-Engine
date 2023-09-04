@@ -35,7 +35,6 @@ public:
 	void println();
 
 	Matrix operator*(Matrix& A);
-	Vec3 operator*(Vec3& v);
 	void operator=(Matrix A);
 
 	~Matrix();

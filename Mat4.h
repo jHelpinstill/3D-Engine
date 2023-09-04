@@ -7,7 +7,7 @@
 class Mat4
 {
 public:
-	Matrix A;
+	Matrix A = Matrix(4, 4);
 	
 	Mat4();
 	Mat4(Matrix A);

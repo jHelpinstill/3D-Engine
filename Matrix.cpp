@@ -228,32 +228,6 @@ Matrix Matrix::operator*(Matrix& A)
 	return B;
 }
 
-Vec3 Matrix::operator*(Vec3& v)
-{
-	Matrix V(3, 1);
-	for (int i = 0; i < 3; i++)
-	{
-		V.a[i][0] = v.n[i];
-	}
-	try
-	{
-		V = *this * V;
-	}
-	catch (MatError e)
-	{
-		//		std::cout << "Error: " << e.warning();
-		exit(0);
-	}
-
-	Vec3 u;
-
-	for (int i = 0; i < 3; i++)
-	{
-		u.n[i] = V.a[i][0];
-	}
-	return u;
-}
-
 void Matrix::operator=(Matrix A)
 {
 	//std::cout << "operator=()" << std::endl;

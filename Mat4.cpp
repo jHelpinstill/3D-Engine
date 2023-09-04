@@ -20,7 +20,15 @@ Mat4::Mat4(Matrix A)
 
 Vec3 Mat4::operator*(Vec3 v)
 {
-	return A * v;
+	Matrix V(4, 1);
+	for (int i = 0; i < 3; i++)
+	{
+		V.a[i][0] = v.n[i];
+	}
+	V.a[3][0] = 1;
+	V = A * V;
+	Vec3 u(V.a[0][0], V.a[1][0], V.a[2][0]);
+	return u;
 }
 
 Mat4 Mat4::operator*(Mat4 &B)
