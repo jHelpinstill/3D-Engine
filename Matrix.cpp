@@ -73,6 +73,7 @@ void Matrix::clear()
 	{
 		delete[] a[i];
 	}
+	delete[] a;
 	n = m = 0;
 	//std::cout << "end of clear()" << std::endl;
 }

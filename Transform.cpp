@@ -19,19 +19,18 @@ Mat4& Transform::getInverse()
 void Transform::setPos(Vec3 v)
 {
 	for(int i = 0; i < 3; i++)
-	{
 		mat.element(i, 3) = v.n[i];
-		inverse_mat.element(i, 3) = -v.n[i];
-	}
+
+
+	inverse_mat = mat.inverse();
 }
 
 void Transform::translate(Vec3 v)
 {
 	for(int i = 0; i < 3; i++)
-	{
 		mat.element(i, 3) += v.n[i];
-		inverse_mat.element(i, 3) -= v.n[i];
-	}
+
+	inverse_mat = mat.inverse();
 }
 
 void Transform::setRot(Quat q)

@@ -53,7 +53,7 @@ Mat4 Mat4::inverse()
 {
 	Matrix B = A;
 	B.invert();
-	return B;
+	return Mat4(B);
 }
 
 void Mat4::debug_print()
