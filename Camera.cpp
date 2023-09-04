@@ -62,12 +62,13 @@ void Camera::drawBall(Canvas& canvas, Vec3 pos, float radius, Color color)
 
 	if (pointInView(pos))
 	{
-		Vec3 point_on_ball = pos + this->transform.getMat().rotateDirVector(Vec3::Y) * radius;
-		Point center_pixel = mapVecToDisplay(canvas, pos);
-		float pixels_radius = center_pixel.x - mapVecToDisplay(canvas, point_on_ball).x;
+		float region_left = mapVecToDisplay(canvas, pos + this->transform.getMat().rotateDirVector(Vec3::Y) * radius  *1.5).x;
+		float region_right = mapVecToDisplay(canvas, pos + this->transform.getMat().rotateDirVector(Vec3::Y * -1) * radius * 1.5).x;
+		float region_top = mapVecToDisplay(canvas, pos + this->transform.getMat().rotateDirVector(Vec3::Z) * radius * 1.5).y;
+		float region_bottom = mapVecToDisplay(canvas, pos + this->transform.getMat().rotateDirVector(Vec3::Z * -1) * radius * 1.5).y;
 
 		ball_depth_info.set(transform.getInverse() * pos, radius, color, FOV_value);
-		canvas.fillCircle(center_pixel.x, center_pixel.y, pixels_radius, checkDepthBall);
+		canvas.fillRect(region_left, region_top, region_right - region_left, region_bottom - region_top, checkDepthBall);
 	}
 }
 
