@@ -42,6 +42,7 @@ public:
 	static Vec3 cross(Vec3 v, Vec3 u);
 	static Vec3 project(Vec3 v, Vec3 u);
 	static float angleBetween(Vec3 v, Vec3 u);
+	static float angleBetweenRad(Vec3 v, Vec3 u);
 	
 	void debug_print();
 	

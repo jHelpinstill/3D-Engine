@@ -110,10 +110,11 @@ Vec3 Vec3::project(Vec3 v, Vec3 u)
 }
 float Vec3::angleBetween(Vec3 v, Vec3 u)
 {
-//	float d = dot(v.unit(), u.unit());
-//	if(d >= 1) return 0;
-//	if(d <= -1) return 180;
 	return acos(dot(v.unit(), u.unit())) * rad2deg;
+}
+float Vec3::angleBetweenRad(Vec3 v, Vec3 u)
+{
+	return acos(dot(v.unit(), u.unit()));
 }
 
 void Vec3::debug_print()
