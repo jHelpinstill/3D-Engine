@@ -54,7 +54,7 @@ void PlayerController::translate(Vec3 v)
 	
 	left = left.unit() * v.y;
 	forward = forward.unit() * v.x;
-	v = camera->transform.getInverse().rotateDirVector(left + forward + Vec3::Z * v.z);
+	v = left + forward + Vec3::Z * v.z;
 	camera->transform.translate(v);
 }
 
