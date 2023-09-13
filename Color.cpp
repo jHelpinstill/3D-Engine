@@ -299,4 +299,7 @@ Color Color::YELLOW = Color(0x00ffff00);
 
 Color Color::BLACK = Color(0x00000000);
 Color Color::WHITE = Color(0x00ffffff);
+Color Color::LIGHT_GRAY = Color(0x00C0C0C0);
+Color Color::GRAY = Color(0x00808080);
+Color Color::DARK_GRAY = Color(0x00404040);
 Color Color::ALPHA = Color(0xff000000);

@@ -53,6 +53,9 @@ public:
 	static Color Y; static Color YELLOW;
 	static Color BLACK;
 	static Color WHITE;
+	static Color LIGHT_GRAY;
+	static Color GRAY;
+	static Color DARK_GRAY;
 	static Color ALPHA;
 };
 
