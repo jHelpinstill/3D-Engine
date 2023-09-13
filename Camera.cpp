@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "TextBox.h"
+#include "Textbox.h"
 #include <cmath>
 
 Camera::Camera(Vec3 pos)
@@ -62,10 +62,10 @@ void Camera::drawBall(Canvas& canvas, Vec3 pos, float radius, Color color)
 
 	if (pointInView(pos))
 	{
-		float region_left = mapVecToDisplay(canvas, pos + this->transform.getMat().rotateDirVector(Vec3::Y) * radius  *1.5).x;
-		float region_right = mapVecToDisplay(canvas, pos + this->transform.getMat().rotateDirVector(Vec3::Y * -1) * radius * 1.5).x;
-		float region_top = mapVecToDisplay(canvas, pos + this->transform.getMat().rotateDirVector(Vec3::Z) * radius * 1.5).y;
-		float region_bottom = mapVecToDisplay(canvas, pos + this->transform.getMat().rotateDirVector(Vec3::Z * -1) * radius * 1.5).y;
+		float region_left = mapVecToDisplay(canvas, pos + this->transform.getMat().rotateDirVector(Vec3::Y) * radius  * 1.5 * FOV_value).x;
+		float region_right = mapVecToDisplay(canvas, pos + this->transform.getMat().rotateDirVector(Vec3::Y * -1) * radius * 1.5 * FOV_value).x;
+		float region_top = mapVecToDisplay(canvas, pos + this->transform.getMat().rotateDirVector(Vec3::Z) * radius * 1.5 * FOV_value).y;
+		float region_bottom = mapVecToDisplay(canvas, pos + this->transform.getMat().rotateDirVector(Vec3::Z * -1) * radius * 1.5 * FOV_value).y;
 
 		ball_depth_info.set(transform.getInverse() * pos, radius, color, FOV_value);
 		canvas.fillRect(region_left, region_top, region_right - region_left, region_bottom - region_top, checkDepthBall);
@@ -209,6 +209,16 @@ float Camera::getFOVVal()
 void Camera::endDraw()
 {
 
+}
+
+float Camera::getFOV()
+{
+	return atan(FOV_value) * Vec3::rad2deg * 2;
+}
+
+void Camera::setFOV(float deg)
+{
+	FOV_value = tan(deg / (2 * Vec3::rad2deg));
 }
 
 Vec3 Camera::getRay(int x, int y, int width, int height, float fov_val)

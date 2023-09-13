@@ -64,7 +64,9 @@ public:
 	static Vec3 getRay(int x, int y, int width, int height, float fov_val);
 	Vec3 getRay(int x, int y);
 	
-	float getFOVVal();		
+	float getFOVVal();	
+	float getFOV();
+	void setFOV(float deg);
 };
 
 #endif
