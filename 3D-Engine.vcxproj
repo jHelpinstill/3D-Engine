@@ -32,10 +32,10 @@
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Quat.cpp" />
-    <ClCompile Include="Render.cpp" />
-    <ClCompile Include="TextBox.cpp" />
+    <ClCompile Include="Textbox.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vec3.cpp" />
+    <ClCompile Include="Widget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine3D.h" />
@@ -53,10 +53,11 @@
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Quat.h" />
-    <ClInclude Include="Render.h" />
-    <ClInclude Include="TextBox.h" />
+    <ClInclude Include="Rect.h" />
+    <ClInclude Include="Textbox.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vec3.h" />
+    <ClInclude Include="Widget.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
