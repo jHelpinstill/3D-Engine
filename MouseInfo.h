@@ -23,7 +23,7 @@ private:
 	int prev_x = 0;
 	int prev_y = 0;
 	bool tracking_movement = false;
-	bool captured = true;
+	bool captured = false;
 	
 	HWND window_handle;
 	
