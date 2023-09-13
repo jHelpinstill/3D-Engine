@@ -1,25 +1,25 @@
-#include "TextBox.h"
+#include "Textbox.h"
 #include <iostream>
 
-TextBox::TextBox(int x, int y)
+Textbox::Textbox(int x, int y)
 {
 	setPos(x, y);
 }
 
-TextBox::TextBox(int x, int y, std::string text)
+Textbox::Textbox(int x, int y, std::string text)
 {
 	print(text);
 	setPos(x, y);
 }
 
-TextBox::TextBox(int x, int y, std::string text, float scale)
+Textbox::Textbox(int x, int y, std::string text, float scale)
 {
 	print(text);
 	setPos(x, y);
 	setScale(scale);
 }
 
-TextBox::TextBox(int x, int y, std::string text, float scale, Color color)
+Textbox::Textbox(int x, int y, std::string text, float scale, Color color)
 {
 	print(text);
 	setPos(x, y);
@@ -27,24 +27,33 @@ TextBox::TextBox(int x, int y, std::string text, float scale, Color color)
 	setScale(scale);
 }
 
-void TextBox::setPos(int x, int y)
+Textbox::Textbox(int x, int y, std::string text, float scale, Color color, std::string name)
+{
+	print(text);
+	setPos(x, y);
+	setColor(color);
+	setScale(scale);
+	this->name = name;
+}
+
+void Textbox::setPos(int x, int y)
 {
 	this->x = x;
 	this->y = y;
 }
 
-void TextBox::setPos(Point p)
+void Textbox::setPos(Point p)
 {
 	this->x = p.x;
 	this->y = p.y;
 }
 
-void TextBox::setColor(Color color)
+void Textbox::setColor(Color color)
 {
 	this->color = color;
 }
 
-void TextBox::drawChar(Canvas& canvas, char c)
+void Textbox::drawChar(Canvas& canvas, char c)
 {
 	int tail_shift = 0;
 	int width_reduce = 0;
@@ -95,7 +104,7 @@ void TextBox::drawChar(Canvas& canvas, char c)
 	delete[] buffer;
 }
 
-void TextBox::draw(Canvas &canvas)
+void Textbox::draw(Canvas &canvas)
 {
 //	std::cout << "drawing text: ";
 	char* text = new char[this->text.length() + 1];
@@ -110,26 +119,26 @@ void TextBox::draw(Canvas &canvas)
 	cursor_y = 0;
 }
 
-int TextBox::getLength()
+int Textbox::getLength()
 {
 	return text.length();
 }
 
-float TextBox::getScale()
+float Textbox::getScale()
 {
 	return scale;
 }
 
-void TextBox::setScale(float scale)
+void Textbox::setScale(float scale)
 {
 	this->scale = scale;
 }
 
-void TextBox::print(std::string text)
+void Textbox::print(std::string text)
 {
 	this->text += text;
 }
-void TextBox::print(double val)
+void Textbox::print(double val)
 {
 	std::stringstream s;
 	std::string temp;
@@ -137,13 +146,24 @@ void TextBox::print(double val)
 	s >> temp;
 	print(temp);
 }
+void Textbox::print(int val, bool hex)
+{
+	std::stringstream s;
+	std::string temp;
+	s << val;
+	if (hex)
+		s >> std::hex >> temp;
+	else
+		s >> temp;
+	print(temp);
+}
 
-void TextBox::clear()
+void Textbox::clear()
 {
 	text = std::string();
 }
 
-LetterBits TextBox::letters[128] = 
+LetterBits Textbox::letters[128] = 
 {
 	{(unsigned int)~0x0, (unsigned int)~0x0},
 	{(unsigned int)~0x0, (unsigned int)~0x0},

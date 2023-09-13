@@ -3,7 +3,9 @@
 
 #include "Frame.h"
 #include "Color.h"
-class TextBox;
+#include "Rect.h"
+
+class Textbox;
 class Camera;
 
 struct Point
@@ -89,6 +91,7 @@ public:
 	void drawPoint(int x, int y, Color (*colorFunc)(int, int, DepthBuffer&));
 	void drawLine(int x0, int y0, int x1, int y1, Color color = Color(0));
 	void drawRect(int x, int y, int width, int height, Color color = Color(0));
+	void drawRect(Rect rect);
 	void fillRect(int x, int y, int width, int height, Color color = Color(0));
 	void fillRect(int x, int y, int width, int height, Color(*colorFunc)(int, int, DepthBuffer&));
 	void fill(Color color);
@@ -111,7 +114,7 @@ public:
 	void fillTriangle(Point p0, Point p1, Point p2, Color color);
 
 	void drawDebug(Point p, float scale, Color color = Color::BLACK);
-	static TextBox debug;
+	static Textbox debug;
 };
 
 #endif

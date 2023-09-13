@@ -13,7 +13,7 @@ struct LetterBits
 	unsigned int bytes[2];
 };
 
-class TextBox
+class Textbox
 {
 private:
 	float x = 0;
@@ -30,11 +30,14 @@ private:
 	void drawChar(Canvas& canvas, char c);
 	
 public:
-	TextBox(){}
-	TextBox(int x, int y);
-	TextBox(int x, int y, std::string text);
-	TextBox(int x, int y, std::string text, float scale);
-	TextBox(int x, int y, std::string text, float scale, Color color);
+	std::string name;
+
+	Textbox(){}
+	Textbox(int x, int y);
+	Textbox(int x, int y, std::string text);
+	Textbox(int x, int y, std::string text, float scale);
+	Textbox(int x, int y, std::string text, float scale, Color color);
+	Textbox(int x, int y, std::string text, float scale, Color color, std::string name);
 	
 	void setPos(int x, int y);
 	void setPos(Point p);
@@ -43,7 +46,7 @@ public:
 	
 	void print(const std::string str);
 	void print(double val);
-	void print(int val);
+	void print(int val, bool hex = false);
 	
 	void clear();
 	void draw(Canvas &canvas);

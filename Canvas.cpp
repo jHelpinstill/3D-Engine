@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include "Camera.h"
-#include "TextBox.h"
+#include "Textbox.h"
 
 Canvas::Canvas(Frame* frame)
 {
@@ -303,7 +303,7 @@ void Canvas::drawMatrix(int x, int y, int image_width, int image_height, Color* 
 	{
 		setCursor(x, y + j);
 		for (int i = 0; i < image_width; i++)
-			drawNextPoint(buffer[i + image_width * j]);
+			drawNextPoint(buffer[i + ((image_height - 1) - j) * image_width]);
 	}
 }
 
@@ -416,7 +416,12 @@ void Canvas::drawLine(int x0, int y0, int x1, int y1, Color color)
 		}
 	}
 }
+void Canvas::drawRect(Rect rect)
+{
 
+	fillRect(rect.x, rect.y, rect.width, rect.height, rect.fill_color);
+	drawRect(rect.x, rect.y, rect.width, rect.height, rect.border_color);
+}
 void Canvas::drawRect(int x, int y, int width, int height, Color color)
 {
 	for(int i = 0; i < width; i++)
@@ -829,4 +834,4 @@ void Canvas::drawDebug(Point p, float scale, Color color)
 }
 
 Color Canvas::default_color = Color(0x0);
-TextBox Canvas::debug;
+Textbox Canvas::debug;
