@@ -57,11 +57,14 @@ void Widget::setSize(int width, int height)
 	body = Canvas(&frame);
 }
 
-void Widget::draw(Canvas& canvas, MouseInfo& mouse)
+void Widget::checkMouse(MouseInfo& mouse)
 {
 	for (Button* button : buttons)
 		button->checkMouse(mouse, x, y);
+}
 
+void Widget::draw(Canvas& canvas, MouseInfo& mouse)
+{
 	drawSelf();
 
 	canvas.drawMatrix(x, y, frame.width, frame.height, (Color*)frame.pixels);
