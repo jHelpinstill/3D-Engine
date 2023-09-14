@@ -22,14 +22,19 @@ private:
 	
 	int prev_x = 0;
 	int prev_y = 0;
+	long raw_x, raw_y;
 	bool tracking_movement = false;
 	bool captured = false;
 	
 	HWND window_handle;
 	
+	
 public:
 	int x, y;
 	int delta_x, delta_y;
+	float delta_x_raw, delta_y_raw;
+
+	float sensitivity = 10;
 	
 	MouseInfo(){}
 	
@@ -49,7 +54,8 @@ public:
 	void release();
 	bool isCaptured();
 	
-	void movedEvent(HWND hwnd);
+	void movedEvent(HWND hwnd, LPARAM lParam);
+	void collectRawData(LPARAM lParam);
 	void leftWindowEvent();
 	void enteredWindowEvent(HWND hwnd);
 };

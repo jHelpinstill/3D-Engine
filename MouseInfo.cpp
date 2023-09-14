@@ -8,22 +8,22 @@ void MouseInfo::update(HWND hwnd)
 	setRightClick();
 	prev_left_down = left_down;
 	prev_right_down = right_down;
-}
-
-void MouseInfo::movedEvent(HWND hwnd)
-{
-	enteredWindowEvent(hwnd);
-	if(captured)
-	{
+	if (captured)
 		whenCaptured();
-		return;
-	}
-	
+
 	delta_x = x - prev_x;
 	delta_y = y - prev_y;
-	
+
 	prev_x = x;
 	prev_y = y;
+}
+
+void MouseInfo::movedEvent(HWND hwnd, LPARAM lParam)
+{
+	x = lParam & (long)0xffff;
+	y = (lParam & (long)0xffff0000) >> 16;
+
+	enteredWindowEvent(hwnd);
 }
 
 void MouseInfo::leftDownEvent()
@@ -72,16 +72,29 @@ bool MouseInfo::rightClick()
 {
 	return right_click;
 }
+void MouseInfo::collectRawData(LPARAM lParam)
+{
+	UINT dwSize = sizeof(RAWINPUT);
+	static BYTE lpb[sizeof(RAWINPUT)];
+
+	UINT result = GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb, &dwSize, sizeof(RAWINPUTHEADER));
+
+	RAWINPUT* raw = (RAWINPUT*)lpb;
+
+	if (raw->header.dwType == RIM_TYPEMOUSE)
+	{
+		raw_x += raw->data.mouse.lLastX;
+		raw_y += raw->data.mouse.lLastY;
+	}
+}
 void MouseInfo::whenCaptured()
 {
-	delta_x = x - prev_x;
-	delta_y = y - prev_y;
-	
+	delta_x_raw = raw_x * sensitivity / 100;
+	delta_y_raw = raw_y * sensitivity / 100;
+
+	raw_x = raw_y = 0;
+
 	centerCursor();
-	bindToWindow();
-	
-	prev_x = x;
-	prev_y = y;
 }
 void MouseInfo::centerCursor()
 {
@@ -92,20 +105,6 @@ void MouseInfo::centerCursor()
 	y = pt.y;
 	ClientToScreen(window_handle, &pt);
 	SetCursorPos(pt.x, pt.y);
-	
-	
-//	RECT rc;
-//	GetClientRect(window_handle, &rc);
-//	
-//	POINT pt = { (rc.left + rc.right) / 2 - 1, (rc.top + rc.bottom) / 2 - 1};
-//	x = pt.x;
-//	y = pt.y;
-////	POINT pt2 = { (rc.left + rc.right) / 2, (rc.top + rc.bottom) / 2};
-//	ClientToScreen(window_handle, &pt);
-////	ClientToScreen(window_handle, &pt2);
-//	SetRect(&rc, pt.x, pt.y, pt.x, pt.y);
-//	
-//	ClipCursor(&rc);
 }
 void MouseInfo::bindToWindow()
 {
@@ -118,15 +117,15 @@ void MouseInfo::bindToWindow()
 	POINT pt2 = { rc.right, rc.bottom };
 	ClientToScreen(window_handle, &pt);
 	ClientToScreen(window_handle, &pt2);
-	SetRect(&rc, pt.x, pt.y, pt2.x, pt2.y);
+	SetRect(&rc, pt.x, pt.y, pt2.x - 1, pt2.y - 1);
 	
 	ClipCursor(&rc);
 }
 void MouseInfo::capture()
 {
 	captured = true;
+	bindToWindow();
 	whenCaptured();
-	delta_x = delta_y = 0;
 }
 void MouseInfo::release()
 {
@@ -139,8 +138,9 @@ bool MouseInfo::isCaptured()
 }
 void MouseInfo::leftWindowEvent()
 {
+	release();
 	tracking_movement = false;
-	delta_x = delta_y = 0;
+	delta_x_raw = delta_y_raw = 0;
 }
 void MouseInfo::enteredWindowEvent(HWND hwnd)
 {

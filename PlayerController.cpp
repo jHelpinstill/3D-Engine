@@ -29,8 +29,8 @@ void PlayerController::update(float dt)
 {
 	if(mouse->isCaptured())
 	{
-		yaw(-mouse->delta_x / 5.0);
-		pitch(-mouse->delta_y / 5.0);
+		yaw(-mouse->delta_x_raw / 5.0);
+		pitch(-mouse->delta_y_raw / 5.0);
 	}
 	
 	if(keyboard->keyHeld('W'))

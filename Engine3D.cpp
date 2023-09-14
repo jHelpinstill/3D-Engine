@@ -1,4 +1,4 @@
-#include <windows.h>
+ #include <windows.h>
 #include <chrono>
 #include <iostream>
 #include <vector>
@@ -52,11 +52,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			EndPaint(hwnd, &paint);
 			return 0;
 		}
-	  case WM_MOUSEMOVE:	
+		case WM_MOUSEMOVE:	
 		{
-			Engine3D::mouse.x = lParam & (long)0xffff;
-			Engine3D::mouse.y = (lParam & (long)0xffff0000) >> 16;
-			Engine3D::mouse.movedEvent(hwnd);
+			Engine3D::mouse.movedEvent(hwnd, lParam);
+			return 0;
+		}
+		case WM_INPUT:
+		{
+			Engine3D::mouse.collectRawData(lParam);
 			return 0;
 		}
 		case WM_MOUSELEAVE:
