@@ -52,6 +52,9 @@ public:
 		std::initializer_list<Region*> regions);
 
 	void setPos(int x, int y);
+	void shiftPos(int x, int y);
+	int getX();
+	int getY();
 	void setSize(int width, int height);
 	void draw(Canvas& canvas, MouseInfo& mouse);
 

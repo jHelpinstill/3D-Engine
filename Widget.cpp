@@ -33,6 +33,21 @@ void Widget::setPos(int x, int y)
 	this->y = y;
 }
 
+void Widget::shiftPos(int x, int y)
+{
+	setPos(this->x + x, this->y + y);
+}
+
+int Widget::getX()
+{
+	return x;
+}
+
+int Widget::getY()
+{
+	return y;
+}
+
 void Widget::setSize(int width, int height)
 {
 	delete frame.pixels;
