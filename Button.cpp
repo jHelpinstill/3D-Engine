@@ -1,7 +1,7 @@
 #include "Button.h"
 #include <iostream>
 
-Button::Button(Rect body, std::string text, std::string name)
+Button::Button(Rect body, std::string text, std::string name, ClickEffect click_effect)
 {
 	setPos(body.x, body.y);
 	setSize(body.width, body.height);
@@ -9,8 +9,10 @@ Button::Button(Rect body, std::string text, std::string name)
 	setBorderColor(body.border_color);
 	setText(text);
 	this->name = name;
+	this->click_effect = click_effect;
+	findPressedColors();
 }
-Button::Button(Rect body, Textbox* text_box, std::string name)
+Button::Button(Rect body, Textbox* text_box, std::string name, ClickEffect click_effect)
 {
 	setPos(body.x, body.y);
 	setSize(body.width, body.height);
@@ -18,8 +20,10 @@ Button::Button(Rect body, Textbox* text_box, std::string name)
 	setBorderColor(body.border_color);
 	setTextBox(text_box);
 	this->name = name;
+	this->click_effect = click_effect;
+	findPressedColors();
 }
-Button::Button(Point relative_pos, int offset_x, int offset_y, int width, int height, std::string text)
+Button::Button(Point relative_pos, int offset_x, int offset_y, int width, int height, std::string text, ClickEffect click_effect)
 {
 	setRelativePos(relative_pos.x, relative_pos.y);
 	setOffset(offset_x, offset_y);
@@ -27,6 +31,8 @@ Button::Button(Point relative_pos, int offset_x, int offset_y, int width, int he
 	setText(text);
 
 	pos_is_relative = true;
+	this->click_effect = click_effect;
+	findPressedColors();
 }
 
 Button::Button(const Button& other)
@@ -76,16 +82,19 @@ void Button::setColor(Color color)
 {
 	this->body.fill_color = color;
 	this->body.border_color = (~color.val & 0x00ffffff) + (color.val & 0xff000000);
+	findPressedColors();
 }
 
 void Button::setFillColor(Color color)
 {
 	this->body.fill_color = color;
+	findPressedColors();
 }
 
 void Button::setBorderColor(Color color)
 {
 	this->body.border_color = color;
+	findPressedColors();
 }
 
 void Button::setText(std::string text)
@@ -138,14 +147,50 @@ void Button::draw(Canvas& canvas)
 	else
 	{
 		Rect pressed = body;
-		Color pressed_color = pressed.fill_color;
-		pressed_color.setR((pressed_color.getR() + 0x80) / 2);
-		pressed_color.setG((pressed_color.getG() + 0x80) / 2);
-		pressed_color.setB((pressed_color.getB() + 0x80) / 2);
-		pressed.fill_color = pressed_color;
+		
+		pressed.fill_color = pressed_fill_color;
+		pressed.border_color = pressed_border_color;
+
 		canvas.drawRect(pressed);
 	}
 	text_box->draw(canvas);
+}
+
+void Button::findPressedColors()
+{
+	pressed_fill_color = body.fill_color;
+	pressed_border_color = body.border_color;
+
+	switch (click_effect)
+	{
+	case ClickEffect::NONE:
+		break;
+
+	case ClickEffect::GRAYER_FILL:
+		pressed_fill_color.setR((body.fill_color.getR() + 0x80) / 2);
+		pressed_fill_color.setG((body.fill_color.getG() + 0x80) / 2);
+		pressed_fill_color.setB((body.fill_color.getB() + 0x80) / 2);
+		break;
+
+	case ClickEffect::GRAYER_BORDER:
+		pressed_border_color.setR((body.border_color.getR() + 0x80) / 2);
+		pressed_border_color.setG((body.border_color.getG() + 0x80) / 2);
+		pressed_border_color.setB((body.border_color.getB() + 0x80) / 2);
+		break;
+
+	case ClickEffect::GRAYER_ALL:
+		pressed_fill_color.setR((body.fill_color.getR() + 0x80) / 2);
+		pressed_fill_color.setG((body.fill_color.getG() + 0x80) / 2);
+		pressed_fill_color.setB((body.fill_color.getB() + 0x80) / 2);
+			   
+		pressed_border_color.setR((body.border_color.getR() + 0x80) / 2);
+		pressed_border_color.setG((body.border_color.getG() + 0x80) / 2);
+		pressed_border_color.setB((body.border_color.getB() + 0x80) / 2);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Button::draw(Canvas& canvas, MouseInfo& mouse)
