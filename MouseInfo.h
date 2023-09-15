@@ -8,13 +8,15 @@ private:
 	bool left_down = false;
 	bool left_held = false;
 	bool left_click = false;
+	bool left_release = false;
 	
 	bool right_down = false;
 	bool right_held = false;
 	bool right_click = false;
+	bool right_release = false;
 	
-	void setLeftClick();
-	void setRightClick();
+	void setLeft();
+	void setRight();
 	
 	void whenCaptured();
 	void centerCursor();
@@ -45,12 +47,14 @@ public:
 	bool leftIsDown();
 	bool leftClick();
 	bool leftHeld();
+	bool leftRelease();
 	
 	void rightDownEvent();
 	void rightUpEvent();
 	bool rightIsDown();
 	bool rightClick();
 	bool rightHeld();
+	bool rightRelease();
 	
 	void capture();
 	void release();
