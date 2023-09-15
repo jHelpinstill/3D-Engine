@@ -63,7 +63,7 @@ void Widget::checkMouse(MouseInfo& mouse)
 		button->checkMouse(mouse, x, y);
 }
 
-void Widget::draw(Canvas& canvas, MouseInfo& mouse)
+void Widget::draw(Canvas& canvas)
 {
 	drawSelf();
 
@@ -80,6 +80,11 @@ void Widget::drawSelf()
 
 	for (Textbox* text : textboxes)
 		text->draw(body);
+}
+
+bool Widget::isAlive()
+{
+	return alive;
 }
 
 Button& Widget::button(std::string name)

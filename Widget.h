@@ -27,10 +27,12 @@ struct Region
 
 class Widget
 {
-private:
+protected:
 
 	int x;
 	int y;
+
+	bool alive = true;
 
 	Frame frame;
 	Canvas body;
@@ -56,8 +58,9 @@ public:
 	int getX();
 	int getY();
 	void setSize(int width, int height);
-	void checkMouse(MouseInfo& mouse);
-	void draw(Canvas& canvas, MouseInfo& mouse);
+	virtual void checkMouse(MouseInfo& mouse);
+	void draw(Canvas& canvas);
+	bool isAlive();
 
 	Button& button(std::string name);
 	Textbox& textbox(std::string name);

@@ -47,6 +47,13 @@ public:
 	void print(const std::string str);
 	void print(double val);
 	void print(int val, bool hex = false);
+
+	template <typename T>
+	void println(T o)
+	{
+		print(o);
+		print("\n");
+	}
 	
 	void clear();
 	void draw(Canvas &canvas);

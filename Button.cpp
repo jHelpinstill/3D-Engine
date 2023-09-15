@@ -215,16 +215,22 @@ void Button::checkMouse(MouseInfo& mouse, int x, int y)
 		clicked = mouse.leftClick();
 		pressed = mouse.leftHeld();
 		released = mouse.leftRelease();
-		if (clicked) grabbed = true;
-		if (!pressed) grabbed = false;
 	}
+	if (clicked) grabbed = true;
+	if (!pressed) grabbed = false;
 }
 void Button::debug_print()
 {
-	std::cout << "pos: " << body.x << ", " << body.y << std::endl;
-	std::cout << "size: " << body.width << ", " << body.height << std::endl;
-	std::cout << "color: " << std::hex << body.fill_color.val << ", " << body.border_color.val << std::dec << std::endl;
-	std::cout << std::endl;
+	//std::cout << "pos: " << body.x << ", " << body.y << std::endl;
+	//std::cout << "size: " << body.width << ", " << body.height << std::endl;
+	//std::cout << "color: " << std::hex << body.fill_color.val << ", " << body.border_color.val << std::dec << std::endl;
+	//std::cout << std::endl;
+	Canvas::debug.println(this->name);
+	Canvas::debug.print("clicked: "); Canvas::debug.println(clicked ? 1 : 0);
+	Canvas::debug.print("pressed: "); Canvas::debug.println(pressed ? 1 : 0);
+	Canvas::debug.print("grabbed: "); Canvas::debug.println(grabbed ? 1 : 0);
+	Canvas::debug.print("released: "); Canvas::debug.println(released ? 1 : 0);
+	Canvas::debug.print("hover: "); Canvas::debug.println(hover_over ? 1 : 0);
 }
 
 Button::~Button()
