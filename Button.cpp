@@ -211,7 +211,7 @@ void Button::checkMouse(MouseInfo& mouse, int x, int y)
 	if (pos_x < (body.x + body.width) && pos_x >= body.x && pos_y < (body.y + body.height) && pos_y >= body.y)
 	{
 		clicked = mouse.leftClick();
-		pressed = mouse.leftIsDown();
+		pressed = mouse.leftHeld();
 	}
 }
 void Button::debug_print()
