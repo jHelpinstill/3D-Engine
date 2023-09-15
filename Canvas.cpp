@@ -299,11 +299,27 @@ Color Canvas::bilinearInterp(Point p, int width, int height, Color* buffer)
 
 void Canvas::drawMatrix(int x, int y, int image_width, int image_height, Color* buffer)
 {
-	for (int j = 0; j < image_height; j++)
+	if (x >= frame->width) return;
+	if (y >= frame->height) return;
+	if (x + image_width < 0) return;
+	if (y + image_height < 0) return;
+
+	int x0 = 0;
+	int y0 = 0;
+	int x1 = image_width;
+	int y1 = image_height;
+	
+	if (x + x1 > frame->width) x1 -= (x + x1) - frame->width;
+	if (y + y1 > frame->height) y1 -= (y + y1) - frame->height;
+	if (x < 0) x0 -= x;
+	if (y < 0) y0 -= y;
+
+	for (int j = y0; j < y1; j++)
 	{
-		setCursor(x, y + j);
-		for (int i = 0; i < image_width; i++)
-			drawNextPoint(buffer[i + ((image_height - 1) - j) * image_width]);
+		setCursor(x + x0, y + j);
+		int offset = ((image_height - 1) - j) * image_width;
+		for (int i = x0; i < x1; i++)
+			drawNextPoint(buffer[i + offset]);
 	}
 }
 
