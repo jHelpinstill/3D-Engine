@@ -206,12 +206,17 @@ void Button::checkMouse(MouseInfo& mouse, int x, int y)
 {
 	clicked = false;
 	pressed = false;
+	hover_over = false;
 	int pos_x = mouse.x - x;
 	int pos_y = mouse.y - y;
 	if (pos_x < (body.x + body.width) && pos_x >= body.x && pos_y < (body.y + body.height) && pos_y >= body.y)
 	{
+		hover_over = true;
 		clicked = mouse.leftClick();
 		pressed = mouse.leftHeld();
+		released = mouse.leftRelease();
+		if (clicked) grabbed = true;
+		if (!pressed) grabbed = false;
 	}
 }
 void Button::debug_print()

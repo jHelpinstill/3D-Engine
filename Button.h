@@ -37,8 +37,11 @@ public:
 
 	std::string name;
 
+	bool hover_over = false;
 	bool pressed = false;
 	bool clicked = false;
+	bool grabbed = false;
+	bool released = false;
 
 	
 	Button() { body.x = body.y = body.width = body.height = 0; body.fill_color = Color(0xd0d0d0), body.border_color = Color(0x2f2f2f); }
