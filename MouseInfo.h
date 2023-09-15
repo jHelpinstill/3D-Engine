@@ -6,11 +6,11 @@ class MouseInfo
 {
 private:
 	bool left_down = false;
-	bool prev_left_down = false;
+	bool left_held = false;
 	bool left_click = false;
 	
 	bool right_down = false;
-	bool prev_right_down = false;
+	bool right_held = false;
 	bool right_click = false;
 	
 	void setLeftClick();
@@ -44,11 +44,13 @@ public:
 	void leftUpEvent();
 	bool leftIsDown();
 	bool leftClick();
+	bool leftHeld();
 	
 	void rightDownEvent();
 	void rightUpEvent();
 	bool rightIsDown();
 	bool rightClick();
+	bool rightHeld();
 	
 	void capture();
 	void release();

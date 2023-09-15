@@ -6,8 +6,8 @@ void MouseInfo::update(HWND hwnd)
 	window_handle = hwnd;
 	setLeftClick();
 	setRightClick();
-	prev_left_down = left_down;
-	prev_right_down = right_down;
+	left_held = left_down;
+	right_held = right_down;
 	if (captured)
 		whenCaptured();
 
@@ -36,7 +36,7 @@ void MouseInfo::leftUpEvent()
 }
 void MouseInfo::setLeftClick()
 {
-	if(left_down && !prev_left_down)
+	if(left_down && !left_held)
 		left_click = true;
 	else
 		left_click = false;
@@ -49,6 +49,10 @@ bool MouseInfo::leftClick()
 {
 	return left_click;
 }
+bool MouseInfo::leftHeld()
+{
+	return left_held;
+}
 void MouseInfo::rightDownEvent()
 {
 	right_down = true;
@@ -59,7 +63,7 @@ void MouseInfo::rightUpEvent()
 }
 void MouseInfo::setRightClick()
 {
-	if(right_down && !prev_right_down)
+	if(right_down && !right_held)
 		right_click = true;
 	else
 		right_click = false;
@@ -71,6 +75,10 @@ bool MouseInfo::rightIsDown()
 bool MouseInfo::rightClick()
 {
 	return right_click;
+}
+bool MouseInfo::rightHeld()
+{
+	return right_held;
 }
 void MouseInfo::collectRawData(LPARAM lParam)
 {
