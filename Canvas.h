@@ -24,6 +24,21 @@ struct DepthBuffer
 	{
 		set(width, height);
 	}
+	DepthBuffer(const DepthBuffer& other)
+	{
+		set(other.width, other.height);
+		for (int i = 0; i < width * height; i++)
+			this->buffer[i] = other.buffer[i];
+	}
+	DepthBuffer& operator=(const DepthBuffer& other)
+	{
+		if (this == &other)
+			return *this;
+		set(other.width, other.height);
+		for (int i = 0; i < width * height; i++)
+			this->buffer[i] = other.buffer[i];
+		return *this;
+	}
 	void set(int width, int height)
 	{
 		delete[] buffer;
@@ -54,8 +69,6 @@ struct DepthBuffer
 class Canvas
 {
 private:
-	Frame* frame = nullptr;
-	DepthBuffer depth_buffer;
 
 	int cursor = 0;
 	
@@ -77,8 +90,21 @@ private:
 	static Color default_color;
 	
 public:
+	Frame* frame = nullptr;
+	DepthBuffer depth_buffer;
+
 	Canvas(){}
 	Canvas(Frame* frame);
+	Canvas(const Canvas& other)
+	{
+		*this = other;
+	}
+	Canvas& operator=(const Canvas& other)
+	{
+		this->frame = other.frame;
+		this->depth_buffer = other.depth_buffer;
+		return *this;
+	}
 	
 	int getWidth();
 	int getHeight();

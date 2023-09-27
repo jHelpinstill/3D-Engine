@@ -141,21 +141,16 @@ void Textbox::print(std::string text)
 void Textbox::print(double val)
 {
 	std::stringstream s;
-	std::string temp;
 	s << val;
-	s >> temp;
-	print(temp);
+	print(s.str());
 }
 void Textbox::print(int val, bool hex)
 {
 	std::stringstream s;
-	std::string temp;
 	s << val;
 	if (hex)
-		s >> std::hex >> temp;
-	else
-		s >> temp;
-	print(temp);
+		s >> std::hex;
+	print(s.str());
 }
 
 void Textbox::clear()

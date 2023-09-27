@@ -9,7 +9,7 @@ namespace Engine3D
 {
 	int millis_per_frame = 10;
 
-	Frame frame = { 0 };
+	Frame frame;
 
 	MouseInfo mouse;
 	KeyInfo keyboard;
