@@ -1,112 +1,54 @@
 #include "Button.h"
-#include <iostream>
 
-Button::Button(Rect body, Textbox* text_box, std::string name, ClickEffect click_effect)
+Button::Button(int x, int y, int width, int height, ClickEffect click_effect, std::string name)
 {
-	setPos(body.x, body.y);
-	setSize(body.width, body.height);
-	setFillColor(body.fill_color);
-	setBorderColor(body.border_color);
-	setTextBox(text_box);
-	this->name = name;
+	setPos(x, y);
+	setBody(standardBody(width, height));
 	this->click_effect = click_effect;
-	findPressedColors();
+	setName(name);
 }
-
-Button::Button(const Button& other)
+Button::Button(int x, int y, const Buffer& body, ClickEffect click_effect, std::string name)
 {
-	*this = other;
+	setPos(x, y);
+	setBody(body);
+	this->click_effect = click_effect;
+	setName(name);
 }
-Button& Button::operator=(const Button& other)
+Button::Button(int x, int y, const Buffer& body, std::string text, ClickEffect click_effect, std::string name)
 {
-	if (this == &other)
-		return *this;
-
-	setPos(other.body.x, other.body.y);
-	setSize(other.body.width, other.body.height);
-	setFillColor(other.body.fill_color);
-	setBorderColor(other.body.border_color);
-	setTextBox(new Textbox(*(other.text_box)));
-
-	this->name = other.name;
-	this->click_effect = other.click_effect;
-	this->hover_over = other.hover_over;
-	this->pressed = other.pressed;
-	this->clicked = other.clicked;
-	this->grabbed = other.grabbed;
-	this->released = other.released;
-	findPressedColors();
+	setPos(x, y);
+	setBody(body);
+	this->click_effect = click_effect;
+	findPressedBody();
+	addText(text);
 	
-	return *this;
+	setName(name);
 }
 
-void Button::setPos(int x, int y)
+void Button::addText(std::string text)
 {
-	this->body.x = x;
-	this->body.y = y;
-	setTextPos();
-}
-void Button::setSize(int width, int height)
-{
-	this->body.width = width;
-	this->body.height = height;
-}
-void Button::setColor(Color color)
-{
-	this->body.fill_color = color;
-	this->body.border_color = (~color.val & 0x00ffffff) + (color.val & 0xff000000);
-	findPressedColors();
-}
+	Canvas canvas_body(body);
+	Canvas canvas_pressed(pressed_body);
 
-void Button::setFillColor(Color color)
-{
-	this->body.fill_color = color;
-	findPressedColors();
-}
-
-void Button::setBorderColor(Color color)
-{
-	this->body.border_color = color;
-	findPressedColors();
-}
-void Button::setTextBox(Textbox* text_box)
-{
-	delete this->text_box;
-	this->text_box = text_box;
-	setTextPos();
-}
-Textbox* Button::getTextBox()
-{
-	return text_box;
-}
-void Button::setTextPos()
-{
-	if (text_box == nullptr)
-		return;
-	text_box->setPos(body.x + body.width / 2 - text_box->getLength() * 6 * text_box->getScale() / 2 + text_box->getScale(), body.y + body.height / 2 - 4 * text_box->getScale());
+	Textbox textbox(0, 0, body.getWidth(), body.getHeight(), text, 1.0, Color::BLACK, Textbox::Adjustment::CENTER, "");
+	
+	textbox.draw(canvas_body);
+	textbox.draw(canvas_pressed);
 }
 
 void Button::draw(Canvas& canvas)
 {
-	if (pressed)
-	{
-		Rect pressed_rect = body;
-		
-		pressed_rect.fill_color = pressed_fill_color;
-		pressed_rect.border_color = pressed_border_color;
-		
-		canvas.drawRect(pressed_rect);
-	}
+	if (states.pressed)
+		canvas.drawMatrix(pos.x, pos.y, pressed_body);
 	else
-		canvas.drawRect(body);
-
-	text_box->draw(canvas);
+		ScreenElement::draw(canvas);
 }
 
-void Button::findPressedColors()
+void Button::findPressedBody()
 {
-	pressed_fill_color = body.fill_color;
-	pressed_border_color = body.border_color;
+	pressed_body = body;
+	Color* pressed_pixels = pressed_body.getPixels();
+	Color* body_pixels = body.getPixels();
 
 	switch (click_effect)
 	{
@@ -114,35 +56,27 @@ void Button::findPressedColors()
 		break;
 
 	case ClickEffect::GRAYER_FILL:
-		pressed_fill_color.setR((body.fill_color.getR() + 0x80) / 2);
-		pressed_fill_color.setG((body.fill_color.getG() + 0x80) / 2);
-		pressed_fill_color.setB((body.fill_color.getB() + 0x80) / 2);
 		break;
 
 	case ClickEffect::GRAYER_BORDER:
-		pressed_border_color.setR((body.border_color.getR() + 0x80) / 2);
-		pressed_border_color.setG((body.border_color.getG() + 0x80) / 2);
-		pressed_border_color.setB((body.border_color.getB() + 0x80) / 2);
 		break;
 
 	case ClickEffect::GRAYER_ALL:
-		pressed_fill_color.setR((body.fill_color.getR() + 0x80) / 2);
-		pressed_fill_color.setG((body.fill_color.getG() + 0x80) / 2);
-		pressed_fill_color.setB((body.fill_color.getB() + 0x80) / 2);
-			   
-		pressed_border_color.setR((body.border_color.getR() + 0x80) / 2);
-		pressed_border_color.setG((body.border_color.getG() + 0x80) / 2);
-		pressed_border_color.setB((body.border_color.getB() + 0x80) / 2);
+		for (int i = 0; i < body.getWidth() * body.getHeight(); i++)
+		{
+			pressed_pixels[i].setR((body_pixels[i].getR() + 0x80) / 2);
+			pressed_pixels[i].setG((body_pixels[i].getG() + 0x80) / 2);
+			pressed_pixels[i].setB((body_pixels[i].getB() + 0x80) / 2);
+		}
 		break;
 	
 	case ClickEffect::LIGHTER_ALL:
-		pressed_fill_color.setR((body.fill_color.getR() + 0xFF) / 2);
-		pressed_fill_color.setG((body.fill_color.getG() + 0xFF) / 2);
-		pressed_fill_color.setB((body.fill_color.getB() + 0xFF) / 2);
-
-		pressed_border_color.setR((body.border_color.getR() + 0xFF) / 2);
-		pressed_border_color.setG((body.border_color.getG() + 0xFF) / 2);
-		pressed_border_color.setB((body.border_color.getB() + 0xFF) / 2);
+		for (int i = 0; i < body.getWidth() * body.getHeight(); i++)
+		{
+			pressed_pixels[i].setR((body_pixels[i].getR() + 0xff) / 2);
+			pressed_pixels[i].setG((body_pixels[i].getG() + 0xff) / 2);
+			pressed_pixels[i].setB((body_pixels[i].getB() + 0xff) / 2);
+		}
 		break;
 
 	default:
@@ -150,36 +84,47 @@ void Button::findPressedColors()
 	}
 }
 
-void Button::draw(Canvas& canvas, MouseInfo& mouse)
-{
-	checkMouse(mouse);
-	draw(canvas);
-}
 void Button::checkMouse(MouseInfo &mouse)
 {
 	checkMouse(mouse, 0, 0);
 }
 void Button::checkMouse(MouseInfo& mouse, int x, int y)
 {
-	clicked = false;
-	pressed = false;
-	hover_over = false;
+	states.clicked = false;
+	states.pressed = false;
+	states.hovered = false;
 	int pos_x = mouse.x - x;
 	int pos_y = mouse.y - y;
-	if (pos_x < (body.x + body.width) && pos_x >= body.x && pos_y < (body.y + body.height) && pos_y >= body.y)
+	if (pos_x < (getPos().x + getSize().width) && pos_x >= getPos().x && pos_y < (getPos().y + getSize().height) && pos_y >= getPos().y)
 	{
-		hover_over = true;
-		clicked = mouse.leftClick();
-		pressed = mouse.leftHeld();
-		released = mouse.leftRelease();
+		states.hovered = true;
+		states.clicked = mouse.leftClick();
+		states.pressed = mouse.leftHeld();
+		states.released = mouse.leftRelease();
 	}
-	if (clicked) grabbed = true;
-	if (!pressed) grabbed = false;
+	if (states.clicked) states.grabbed = true;
+	if (!states.pressed) states.grabbed = false;
 }
 
-Rect Button::getRect()
+bool Button::hovered()
 {
-	return body;
+	return states.hovered;
+}
+bool Button::pressed()
+{
+	return states.pressed;
+}
+bool Button::clicked()
+{
+	return states.clicked;
+}
+bool Button::grabbed()
+{
+	return states.grabbed;
+}
+bool Button::released()
+{
+	return states.released;
 }
 
 void Button::debug_print()
@@ -190,16 +135,20 @@ std::string Button::debug_string()
 {
 	std::stringstream ss;
 	ss << this->name;
-	ss << "\nclicked: " << (clicked ? 1 : 0);
-	ss << "\npressed: " << (pressed ? 1 : 0);
-	ss << "\ngrabbed: " << (grabbed ? 1 : 0);
-	ss << "\nreleased: " << (released ? 1 : 0);
-	ss << "\nhover: " << (hover_over ? 1 : 0);
+	ss << "\nclicked: " << (states.clicked ? 1 : 0);
+	ss << "\npressed: " << (states.pressed ? 1 : 0);
+	ss << "\ngrabbed: " << (states.grabbed ? 1 : 0);
+	ss << "\nreleased: " << (states.released ? 1 : 0);
+	ss << "\nhover: " << (states.hovered ? 1 : 0);
 	std::string out = ss.str();
 	return out;
 }
 
-Button::~Button()
+Buffer Button::standardBody(int width, int height, Color fill_color, Color border_color)
 {
-	delete text_box;
+	Buffer body(width, height);
+	Canvas canvas(body);
+	canvas.fill(fill_color);
+	canvas.drawRect(0, 0, width, height, border_color);
+	return body;
 }

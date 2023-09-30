@@ -123,7 +123,7 @@ Button* Widget::button(std::string name)
 {
 	for (Button& button : buttons)
 	{
-		if (button.name.compare(name) == 0)
+		if (button.getName().compare(name) == 0)
 		{
 			return &button;
 		}
@@ -134,7 +134,7 @@ Textbox* Widget::textbox(std::string name)
 {
 	for (Textbox& text : textboxes)
 	{
-		if (text.name.compare(name) == 0)
+		if (text.getName().compare(name) == 0)
 		{
 			return &text;
 		}

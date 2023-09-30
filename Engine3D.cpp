@@ -98,15 +98,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 		{		
 //			std::cout << "key down: " << wParam << std::endl;
 			Engine3D::keyboard.keyDownEvent(wParam);
-	      return 0;
-	   }
+			return 0;
+		}
 
     	case WM_KEYUP:
-      {		
+		{		
 //			std::cout << "key up: " << wParam << std::endl;
 			Engine3D::keyboard.keyUpEvent(wParam);
-	      return 0;
-	   }
+			return 0;
+		}
 		case WM_SIZE:
 		{			
 			Engine3D::frame_bitmap_info.bmiHeader.biWidth = LOWORD(lParam);

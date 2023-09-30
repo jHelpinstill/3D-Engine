@@ -11,6 +11,12 @@ Canvas::Canvas(Frame* frame)
 	depth_buffer.set(frame->width, frame->height);
 }
 
+Canvas::Canvas(Buffer& buffer)
+{
+	this->frame = buffer.getFrame();
+	depth_buffer.set(this->frame->width, this->frame->height);
+}
+
 int Canvas::getWidth()
 {
 	return frame->width;
@@ -296,8 +302,12 @@ Color Canvas::bilinearInterp(Point p, int width, int height, Color* buffer)
 	Color colors[4];
 	//if()
 }
+void Canvas::drawMatrix(int x, int y, Buffer buffer)
+{
+	drawMatrix(x, y, buffer.getWidth(), buffer.getHeight(), buffer.getPixels());
+}
 
-void Canvas::drawMatrix(int x, int y, int image_width, int image_height, Color* buffer)
+void Canvas::drawMatrix(int x, int y, int image_width, int image_height, Color* buffer, bool flip_vertical)
 {
 	if (x >= frame->width) return;
 	if (y >= frame->height) return;
@@ -313,13 +323,25 @@ void Canvas::drawMatrix(int x, int y, int image_width, int image_height, Color* 
 	if (y + y1 > frame->height) y1 -= (y + y1) - frame->height;
 	if (x < 0) x0 -= x;
 	if (y < 0) y0 -= y;
-
-	for (int j = y0; j < y1; j++)
+	if(!flip_vertical)
 	{
-		setCursor(x + x0, y + j);
-		int offset = ((image_height - 1) - j) * image_width;
-		for (int i = x0; i < x1; i++)
-			drawNextPoint(buffer[i + offset]);
+		for (int j = y0; j < y1; j++)
+		{
+			setCursor(x + x0, y + j);
+			int offset = ((image_height - 1) - j) * image_width;
+			for (int i = x0; i < x1; i++)
+				drawNextPoint(buffer[i + offset]);
+		}
+	}
+	else
+	{
+		for (int j = y0; j < y1; j++)
+		{
+			setCursor(x + x0, y + j);
+			int offset = j * image_width;
+			for (int i = x0; i < x1; i++)
+				drawNextPoint(buffer[i + offset]);
+		}
 	}
 }
 
@@ -349,7 +371,6 @@ void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float 
 
 	for (int j = 0; j < height; j++)
 	{
-		setCursor(x0, y0 + j);
 		for (int i = 0; i < width; i++)
 		{
 			float u = i - t0 / scale;
@@ -357,11 +378,9 @@ void Canvas::lerpDrawMatrix(Point pos, int image_width, int image_height, float 
 			float t = u - floor(u);
 			float s = v - floor(v);
 
-			//drawNextPoint();
-			drawNextPoint(averageOfRegion((i - t0) / scale, (j - s0) / scale, 1.0 / scale, 1.0 / scale, buffer, image_width, image_height));
+			drawPoint(x0 + i, y0 + j, averageOfRegion((i - t0) / scale, (j - s0) / scale, 1.0 / scale, 1.0 / scale, buffer, image_width, image_height));
 		}
 	}
-	//drawRect(x0 - 1, y0 - 1, width + 2, height + 2);
 }
 
 void Canvas::drawLine(int x0, int y0, int x1, int y1, Color color)
@@ -434,12 +453,12 @@ void Canvas::drawLine(int x0, int y0, int x1, int y1, Color color)
 }
 void Canvas::drawRect(Rect rect)
 {
-
 	fillRect(rect.x, rect.y, rect.width, rect.height, rect.fill_color);
 	drawRect(rect.x, rect.y, rect.width, rect.height, rect.border_color);
 }
 void Canvas::drawRect(int x, int y, int width, int height, Color color)
 {
+	if (color.getAlpha() == 0xff) return;
 	for(int i = 0; i < width; i++)
 	{
 		drawPoint(x + i, y, color);
@@ -465,6 +484,7 @@ void Canvas::fillRect(int x, int y, int width, int height, Color(*colorFunc)(int
 
 void Canvas::fillRect(int x, int y, int width, int height, Color color)
 {
+	if (color.getAlpha() == 0xff) return;
 	if (x >= frame->width) return;
 	if (y >= frame->height) return;
 
@@ -484,15 +504,6 @@ void Canvas::fillRect(int x, int y, int width, int height, Color color)
 		for (int j = x; j < x1; j++)
 			drawNextPoint(color);
 	}
-
-
-	//for(int i = x; i < x + width; i++)
-	//{
-	//	for(int j = y; j < y + height; j++)
-	//	{
-	//		drawPoint(i, j, color);
-	//	}
-	//}
 }
 
 void Canvas::fill(Color color)
@@ -843,11 +854,12 @@ int Canvas::signOf(float a)
 
 void Canvas::drawDebug(Point p, float scale, Color color)
 {
-	debug.setPos(p);
-	debug.setScale(scale);
-	debug.setColor(color);
+	debug.setPos(p.x, p.y);
+	debug.setTextScale(scale);
+	debug.setTextColor(color);
+	debug.render();
 	debug.draw(*this);
 }
 
 Color Canvas::default_color = Color(0x0);
-Textbox Canvas::debug;
+Textbox Canvas::debug = Textbox(0, 0, 50, 50);

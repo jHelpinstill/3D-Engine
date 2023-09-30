@@ -7,21 +7,29 @@
 #include <string.h>
 #include <stdio.h>
 #include <sstream>
+#include "ScreenElement.h"
+#include "Buffer.h"
 
 struct LetterBits
 {
 	unsigned int bytes[2];
 };
 
-class Textbox
+class Textbox : public ScreenElement
 {
-private:
-	float x = 0;
-	float y = 0;
-	int width = -1;
-	float scale = 2;
+public:
+	enum class Adjustment
+	{
+		LEFT,
+		RIGHT,
+		CENTER
+	};
+
+protected:
 	std::string text;
-	Color color = 0x0;
+	float text_scale = 1;
+	Color text_color = 0x0;
+	Adjustment adjustment = Adjustment::LEFT;
 	
 	static LetterBits letters[128];
 	int cursor_x = 0;
@@ -30,23 +38,20 @@ private:
 	void drawChar(Canvas& canvas, char c);
 	
 public:
-	std::string name;
 
 	Textbox(){}
-	Textbox(int x, int y);
-	Textbox(int x, int y, std::string text);
-	Textbox(int x, int y, std::string text, float scale);
-	Textbox(int x, int y, std::string text, float scale, Color color);
-	Textbox(int x, int y, std::string text, float scale, Color color, std::string name);
+	Textbox(int x, int y, int width, int height);
+	Textbox(int x, int y, int width, int height, std::string text, float scale = 1, Color color = Color::BLACK, Adjustment adjustment = Adjustment::LEFT, std::string name = "");
 	
-	void setPos(int x, int y);
-	void setPos(Point p);
-	void setScale(float scale);
-	void setColor(Color color);
+	void setTextScale(float scale);
+	void setTextColor(Color color);
+	void setAdjustment(Adjustment adjustment);
 	
 	void print(const std::string str);
 	void print(double val);
 	void print(int val, bool hex = false);
+
+	void render();
 
 	template <typename T>
 	void println(T o)
@@ -56,7 +61,6 @@ public:
 	}
 	
 	void clear();
-	void draw(Canvas &canvas);
 	int getLength();
 	float getScale();
 };

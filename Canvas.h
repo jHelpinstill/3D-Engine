@@ -4,6 +4,7 @@
 #include "Frame.h"
 #include "Color.h"
 #include "Rect.h"
+#include "Buffer.h"
 
 class Textbox;
 class Camera;
@@ -95,6 +96,7 @@ public:
 
 	Canvas(){}
 	Canvas(Frame* frame);
+	Canvas(Buffer& buffer);
 	Canvas(const Canvas& other)
 	{
 		*this = other;
@@ -110,7 +112,8 @@ public:
 	int getHeight();
 	void getFrameRegion(int x, int y, int width, int height, int* buffer);
 
-	void drawMatrix(int x, int y, int image_width, int image_height, Color* buffer);
+	void drawMatrix(int x, int y, int image_width, int image_height, Color* buffer, bool flip_vertical = false);
+	void drawMatrix(int x, int y, Buffer buffer);
 	void lerpDrawMatrix(Point pos, int image_width, int image_height, float scale, Color* buffer);
 	
 	void drawPoint(int x, int y, Color color = Color(0));

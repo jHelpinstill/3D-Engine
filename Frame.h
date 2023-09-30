@@ -5,11 +5,11 @@
 
 struct Frame
 {
-	int width;
-	int height;
+	int width = 0;
+	int height = 0;
 	uint32_t *pixels = nullptr;
 	
-	float dt;
+	float dt = 0;
 };
 
 #endif

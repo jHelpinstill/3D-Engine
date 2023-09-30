@@ -1,56 +1,35 @@
 #include "Textbox.h"
 #include <iostream>
-
-Textbox::Textbox(int x, int y)
+Textbox::Textbox(int x, int y, int width, int height)
 {
 	setPos(x, y);
+	setSize(width, height);
 }
-
-Textbox::Textbox(int x, int y, std::string text)
+Textbox::Textbox(int x, int y, int width, int height, std::string text, float scale, Color color, Adjustment adjustment, std::string name)
 {
+	setPos(x, y);
+	setSize(width, height);
+	setTextColor(color);
+	setTextScale(scale);
+	setName(name);
+	this->adjustment = adjustment;
 	print(text);
-	setPos(x, y);
+	render();
 }
 
-Textbox::Textbox(int x, int y, std::string text, float scale)
+void Textbox::setTextScale(float scale)
 {
-	print(text);
-	setPos(x, y);
-	setScale(scale);
+	this->text_scale = scale;
 }
 
-Textbox::Textbox(int x, int y, std::string text, float scale, Color color)
+void Textbox::setTextColor(Color color)
 {
-	print(text);
-	setPos(x, y);
-	setColor(color);
-	setScale(scale);
+	this->text_color = color;
 }
 
-Textbox::Textbox(int x, int y, std::string text, float scale, Color color, std::string name)
+void Textbox::setAdjustment(Adjustment  adjustment)
 {
-	print(text);
-	setPos(x, y);
-	setColor(color);
-	setScale(scale);
-	this->name = name;
-}
-
-void Textbox::setPos(int x, int y)
-{
-	this->x = x;
-	this->y = y;
-}
-
-void Textbox::setPos(Point p)
-{
-	this->x = p.x;
-	this->y = p.y;
-}
-
-void Textbox::setColor(Color color)
-{
-	this->color = color;
+	this->adjustment = adjustment;
 }
 
 void Textbox::drawChar(Canvas& canvas, char c)
@@ -74,10 +53,9 @@ void Textbox::drawChar(Canvas& canvas, char c)
 	case 'l':
 		width_reduce = 0;
 		break;
-	case '\n':
-		cursor_x = 0;
-		cursor_y += 12;
-		return;
+	case ' ':
+		cursor_x += 6;
+		break;
 	default:
 		break;
 	}
@@ -90,33 +68,175 @@ void Textbox::drawChar(Canvas& canvas, char c)
 	for (int i = width_reduce; i < 4; i++) for (int j = 0; j < 8; j++)
 		if ((letters[c].bytes[0] << j + i * 8) & 0x80000000)
 		{
-			buffer[i + 5 * (j + tail_shift)] = color;
+			buffer[i + 5 * (j + tail_shift)] = text_color;
 		}
 	if (!width_reduce)
 		for (int j = 0; j < 8; j++)
 			if ((letters[c].bytes[1] << j) & 0x80000000)
 			{
-				buffer[4 + 5 * (j + tail_shift)] = color;
+				buffer[4 + 5 * (j + tail_shift)] = text_color;
 			}
-	//canvas.drawMatrix(x + cursor_x * scale, y + cursor_y * scale, 5, 11, buffer);
-	canvas.lerpDrawMatrix(Point(x + cursor_x * scale, y + cursor_y * scale), 5, 11, scale, buffer); 
+	//canvas.lerpDrawMatrix(Point(cursor_x * text_scale, cursor_y * text_scale), 5, 11, text_scale, buffer); 
+	canvas.drawMatrix(cursor_x * text_scale, cursor_y * text_scale, 5, 11, buffer, true); 
 	cursor_x += 6;
 	delete[] buffer;
 }
 
-void Textbox::draw(Canvas &canvas)
+void Textbox::render()
 {
-//	std::cout << "drawing text: ";
-	char* text = new char[this->text.length() + 1];
-	strcpy_s(text, this->text.length() + 1, this->text.c_str());
-	
-	int length = this->text.length();
-	for(int c = 0; c < length; c++)
-	{
-		drawChar(canvas, text[c]);
-	}
-	cursor_x = 0;
+	Canvas canvas(body);
+
+	int width_in_chars = body.getWidth() / (6 * text_scale);
 	cursor_y = 0;
+
+	switch (adjustment)
+	{
+	case Adjustment::LEFT:
+	{
+		int char_cursor = 0;
+		std::string next_word;
+		for (int c = 0; c < text.length(); c++)
+		{
+			if (char_cursor >= width_in_chars)
+			{
+				cursor_x = 0;
+				cursor_y += 12 * text_scale;
+				char_cursor = 0;
+			}
+			char next_char = text.at(c);
+			switch (next_char)
+			{
+			case ' ':
+			{
+				for (int i = 0; i < next_word.length(); i++)
+					drawChar(canvas, next_word.at(i));
+				next_word.clear();
+				char_cursor++;
+				continue;
+			}
+			case '\n':
+			{
+				for (int i = 0; i < next_word.length(); i++)
+					drawChar(canvas, next_word.at(i));
+				next_word.clear();
+				char_cursor = 0;
+				cursor_x = 0;
+				cursor_y += 12 * text_scale;
+				continue;
+			}
+			default:
+			{
+				next_word += next_char;
+				char_cursor++;
+			}
+			}
+
+			if (next_word.length() == width_in_chars)
+			{
+				for (int i = 0; i < next_word.length(); i++)
+					drawChar(canvas, next_word.at(i));
+				next_word.clear();
+				char_cursor = 0;
+				continue;
+			}
+			else if (char_cursor == width_in_chars)
+			{
+				cursor_x = 0;
+				cursor_y += 12 * text_scale;
+				char_cursor = next_word.length();
+			}
+
+		}
+		//cursor_x = 0;
+		//int char_cursor = 0;
+		//int c = 0;
+		//while (c < text.length())
+		//{
+		//	int next_word_length = 0;
+		//	char next_char;
+		//	do
+		//	{
+		//		next_char = text.at(c + next_word_length++);
+		//	} while (next_char != ' ' && next_char != '\n' && c + next_word_length < text.length());
+		//	next_word_length--;
+		//
+		//	if (next_word_length > width_in_chars)
+		//	{
+		//		next_word_length = width_in_chars - char_cursor;
+		//		if (next_word_length <= 0)
+		//		{
+		//			next_word_length = width_in_chars;
+		//			cursor_y += 12;
+		//			cursor_x = 0;
+		//			char_cursor = 0;
+		//		}
+		//	}
+		//	else if (char_cursor + next_word_length > width_in_chars)
+		//	{
+		//		cursor_y += 12;
+		//		cursor_x = 0;
+		//		char_cursor = 0;
+		//	}
+		//	for (int i = 0; i < next_word_length; i++)
+		//	{
+		//		drawChar(canvas, text.at(c++));
+		//		char_cursor++;
+		//	}
+		//	if (next_char == '\n')
+		//	{
+		//		cursor_y += 12;
+		//		cursor_x = 0;
+		//		char_cursor = 0;
+		//	}
+		//	else
+		//	{
+		//		drawChar(canvas, ' ');
+		//		char_cursor++;
+		//	}
+		//}
+		break;
+	}
+	case Adjustment::CENTER:
+	{
+		int chars_in_line = 0;
+		int c = 0;
+		while (c < text.length())
+		{
+			int line_length = 0;
+			char next_char;
+			while (1)
+			{
+				int next_word_length = 0;
+
+				do
+				{
+					next_char = text.at(c + line_length + next_word_length++);
+				} while (next_char != ' ' && next_char != '\n' && c + next_word_length < text.length());
+				next_word_length--;
+
+				if (chars_in_line + next_word_length > width_in_chars)
+					break;
+				else
+					line_length += next_word_length + 1;
+
+				if (next_char == '\n')
+					break;
+			}
+			cursor_x = ((width_in_chars - chars_in_line) * 6 * text_scale) / 2;
+
+			for (int i = 0; i < line_length; i++)
+				drawChar(canvas, text.at(c++));
+
+			cursor_y += 12;
+			chars_in_line = 0;
+		}
+		break;
+	}
+	case Adjustment::RIGHT:
+	{
+		break;
+	}
+	}
 }
 
 int Textbox::getLength()
@@ -126,12 +246,7 @@ int Textbox::getLength()
 
 float Textbox::getScale()
 {
-	return scale;
-}
-
-void Textbox::setScale(float scale)
-{
-	this->scale = scale;
+	return text_scale;
 }
 
 void Textbox::print(std::string text)

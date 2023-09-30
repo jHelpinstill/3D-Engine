@@ -9,6 +9,10 @@ void KeyInfo::keyDownEvent(int key_code)
 	if(keys[key_code].prev_down == false)
 		keys[key_code].pressed = true;
 	keys[key_code].prev_down = true;
+
+	buffer += (char)key_code;
+	if (buffer.length() > 25)
+		buffer = buffer.substr(1);
 }
 
 void KeyInfo::keyUpEvent(int key_code)
@@ -32,4 +36,23 @@ bool KeyInfo::keyPressed(int c)
 bool KeyInfo::keyHeld(int c)
 {
 	return keys[c].down;
+}
+
+bool KeyInfo::available()
+{
+	return !buffer.empty();
+}
+char KeyInfo::readBuffer()
+{
+	if (buffer.empty())
+		return 0;
+	char c = buffer.at(0);
+	buffer = buffer.substr(1);
+	return c;
+}
+std::string KeyInfo::getBuffer()
+{
+	std::string line = buffer;
+	buffer.clear();
+	return line;
 }

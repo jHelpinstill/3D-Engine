@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Canvas.cpp" />
@@ -32,12 +33,14 @@
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Quat.cpp" />
+    <ClCompile Include="ScreenElement.cpp" />
     <ClCompile Include="Textbox.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vec3.cpp" />
     <ClCompile Include="Widget.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Buffer.h" />
     <ClInclude Include="Engine3D.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
@@ -54,6 +57,7 @@
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Quat.h" />
     <ClInclude Include="Rect.h" />
+    <ClInclude Include="ScreenElement.h" />
     <ClInclude Include="Textbox.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vec3.h" />
